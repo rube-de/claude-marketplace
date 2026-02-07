@@ -15,12 +15,12 @@ cc-skills/
 │   │   ├── hooks/               # Pre/post tool-use hooks
 │   │   ├── scripts/             # Preflight, JSON validation
 │   │   └── skills/              # council, council-reference
-│   ├── claude-dev-team/         ← Multi-agent dev team (Agent Teams)
+│   ├── cdt/                     ← Multi-agent dev team (Agent Teams)
 │   │   ├── agents/              # Researcher subagent (Context7)
 │   │   ├── commands/            # plan-task, dev-task, full-task, auto-task
 │   │   ├── hooks/               # Session start validation
 │   │   ├── scripts/             # Agent teams prerequisite check
-│   │   └── skills/              # claude-dev-team
+│   │   └── skills/              # cdt
 │   ├── project-manager/         ← GitHub issue creation
 │   │   └── skills/              # project-manager
 │   └── plugin-dev/              ← Plugin development tools

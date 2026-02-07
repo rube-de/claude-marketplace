@@ -1,11 +1,11 @@
 ---
-name: claude-dev-team
+name: cdt
 description: "Multi-agent development workflow using Agent Teams. Supports four modes: plan (architect + PM debate → plan.md), dev (developer + tester + reviewer iterate → code), full (plan → approval gate → dev), and auto (plan → dev, no gate). Use when tasks benefit from collaborative agent roles with peer messaging."
 license: MIT
 compatibility: "Requires Claude Code with CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1. Context7 MCP server is bundled via plugin .mcp.json and starts automatically."
 allowed-tools: Read Grep Glob Bash Task TaskCreate TaskUpdate TaskList TaskGet Write Edit AskUserQuestion TeamCreate SendMessage TeamDelete WebSearch WebFetch
 metadata:
-  author: claude-dev-team
+  author: cdt
   version: "1.0.0"
 ---
 

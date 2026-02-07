@@ -14,16 +14,31 @@ Task tool:
 
 ---
 
+## Git Check (all modes)
+
+Before any mode begins, check the current branch:
+
+1. Run `git branch --show-current`
+2. If on `main` or `master`:
+   - AskUserQuestion: "You're on the main branch. Create a feature branch before starting?"
+     Options: Create branch (Recommended) | Continue on main
+   - If create: suggest a branch name based on the task (e.g. `feat/rate-limiting`), then `git checkout -b <branch> origin/main`
+3. Run `git fetch origin && git pull` to ensure up-to-date
+
+---
+
 ## Mode: plan
 
-Produces `.claude/plans/plan.md`. Does NOT implement.
+Produces `.claude/plans/plan-YYYYMMDD-HHMM.md`. Does NOT implement.
 
 ### Steps
 
-1. **Explore** — Read files, Glob/Grep codebase, identify stack. If ambiguous, ask user.
-2. **TeamCreate** "plan-team"
-3. **TaskCreate** — "Research libraries" (you via subagent), "Design architecture" (architect), "Validate requirements" (PM, blocked by design)
-4. **Spawn all three in parallel:**
+0. **Git Check** — see above
+1. **Generate Timestamp** — `YYYYMMDD-HHMM` format, store as `$TIMESTAMP`
+2. **Explore** — Read files, Glob/Grep codebase, identify stack. If ambiguous, ask user.
+3. **TeamCreate** "plan-team"
+4. **TaskCreate** — "Research libraries" (you via subagent), "Design architecture" (architect), "Validate requirements" (PM, blocked by design)
+5. **Spawn all three in parallel:**
 
 **Architect** teammate:
 ```
@@ -71,28 +86,30 @@ Task tool:
     Stack: [detected]. Return structured findings with code examples.
 ```
 
-5. **Coordinate:**
+6. **Coordinate:**
    - Researcher returns → relay findings to architect
    - Architect needs more docs → spawn another Researcher subagent, relay results
    - Architect shares design → verify against research
    - PM validates → if NEEDS_REVISION, forward to architect (max 2 cycles)
    - Disagreement → you decide based on requirements + research
-6. **Write plan** to `.claude/plans/plan.md` (see Plan Template below)
-7. **Cleanup** — shutdown teammates, TeamDelete
-8. **Present** — summarize task count, waves, key decisions, risks
+7. **Write plan** to `.claude/plans/plan-$TIMESTAMP.md` (see Plan Template below)
+8. **Cleanup** — shutdown teammates, TeamDelete
+9. **Present** — tell the user the plan path, summarize task count, waves, key decisions, risks
 
 ---
 
 ## Mode: dev
 
-Implements an existing plan file (default: `.claude/plans/plan.md`).
+Implements an existing plan file (passed as argument, e.g. `.claude/plans/plan-20260207-1430.md`).
 
 ### Steps
 
+0. **Git Check** — see above
 1. **Parse plan** — extract tasks, dependencies, waves. Check files-per-task for conflict avoidance.
-2. **TeamCreate** "dev-team"
-3. **TaskCreate** — one per plan task (preserve `depends_on` via `addBlockedBy`), plus "Test all" and "Review all"
-4. **Spawn teammates:**
+2. **Generate Timestamp** — `YYYYMMDD-HHMM` format for dev report, store as `$TIMESTAMP`
+3. **TeamCreate** "dev-team"
+4. **TaskCreate** — one per plan task (preserve `depends_on` via `addBlockedBy`), plus "Test all" and "Review all"
+5. **Spawn teammates:**
 
 **Developer**:
 ```
@@ -101,7 +118,7 @@ Task tool:
   name: "developer"
   model: opus
   prompt: >
-    You are the developer. Plan: .claude/plans/plan.md — read it first.
+    You are the developer. Plan: [plan-path] — read it first.
     Working directory: [path]
 
     1. Check TaskList, claim unblocked tasks (lowest ID first)
@@ -124,7 +141,7 @@ Task tool:
   name: "tester"
   model: sonnet
   prompt: >
-    You are the tester. Plan: .claude/plans/plan.md — read Testing Strategy.
+    You are the tester. Plan: [plan-path] — read Testing Strategy.
 
     1. Check TaskList — your task is blocked until implementation completes
     2. Wait for developer to message what they changed
@@ -145,7 +162,7 @@ Task tool:
   name: "reviewer"
   model: opus
   prompt: >
-    You are the code reviewer. Plan: .claude/plans/plan.md — read Architecture.
+    You are the code reviewer. Plan: [plan-path] — read Architecture.
 
     1. Check TaskList — your task is blocked until tests pass
     2. Wait for lead to activate you
@@ -160,17 +177,32 @@ Task tool:
     Be specific: file paths, line numbers, concrete fixes.
 ```
 
-5. **Execute waves:**
+6. **Execute waves:**
    - Assign tasks to developer (TaskUpdate `owner`)
    - Message developer: "Wave N ready. Tasks: [list]. Context from prior waves: [results]"
    - Monitor TaskList
    - If developer needs docs — spawn Researcher subagent, relay results
    - Verify wave: check build, update plan file (status, log, files_changed)
-6. **Testing** — message tester: "Implementation complete. Files: [list]. Begin testing." Dev↔Tester iterate directly. Intervene only on escalation.
-7. **Review** — message reviewer: "Tests passing. Files: [list]. Begin review." Dev↔Reviewer iterate directly. Intervene only on escalation.
-8. **Final verification** — full test suite, build, stub scan (`rg "TODO|FIXME|HACK|XXX|stub" --type-not md`), update plan to final state
-9. **Cleanup** — shutdown teammates, TeamDelete
-10. **Report** to `.claude/files/dev-report.md` (see Report Template below)
+7. **Testing** — message tester: "Implementation complete. Files: [list]. Begin testing." Dev↔Tester iterate directly. Intervene only on escalation.
+8. **Review** — message reviewer: "Tests passing. Files: [list]. Begin review." Dev↔Reviewer iterate directly. Intervene only on escalation.
+9. **Final verification** — full test suite, build, stub scan (`rg "TODO|FIXME|HACK|XXX|stub" --type-not md`), update plan to final state
+10. **Cleanup** — shutdown teammates, TeamDelete
+11. **Report** to `.claude/files/dev-report-$TIMESTAMP.md` (see Report Template below)
+
+### Wrap Up
+
+Ask user:
+```
+AskUserQuestion:
+  "Development complete. Report written to .claude/files/dev-report-$TIMESTAMP.md. Ready to commit, push, and create a PR?"
+  Options: Create PR (Recommended) | Commit & push only | Skip
+```
+
+If creating PR:
+1. Stage changed files
+2. Commit with conventional commit message based on task
+3. Push branch
+4. Create PR with plan summary as description
 
 ---
 
@@ -178,10 +210,27 @@ Task tool:
 
 Plan → approval gate → dev. One team at a time.
 
-1. Execute **plan** mode (steps 1-8)
-2. **Ask user:** "Plan ready. [N] tasks, [M] waves. Key decisions: [summary]. Risks: [summary]." Options: Approve (Recommended) | Revise | Cancel
-3. Do NOT proceed without approval. If revisions: update plan, re-present.
-4. Execute **dev** mode (steps 1-10)
+0. **Git Check** — see above
+1. Generate timestamp `$TIMESTAMP` in `YYYYMMDD-HHMM` format
+2. Execute **plan** mode (steps 1-9)
+3. **Ask user:** "Plan ready at .claude/plans/plan-$TIMESTAMP.md. [N] tasks, [M] waves. Key decisions: [summary]. Risks: [summary]." Options: Approve (Recommended) | Revise | Cancel
+4. Do NOT proceed without approval. If revisions: update plan, re-present.
+5. Execute **dev** mode (steps 1-11), passing plan path from step 2
+
+### Wrap Up
+
+Ask user:
+```
+AskUserQuestion:
+  "Development complete. Report written to .claude/files/dev-report-$TIMESTAMP.md. Ready to commit, push, and create a PR?"
+  Options: Create PR (Recommended) | Commit & push only | Skip
+```
+
+If creating PR:
+1. Stage changed files
+2. Commit with conventional commit message based on task
+3. Push branch
+4. Create PR with plan summary as description
 
 ---
 
@@ -189,15 +238,26 @@ Plan → approval gate → dev. One team at a time.
 
 Plan → dev, no approval gate.
 
-1. Execute **plan** mode (steps 1-8)
-2. Log brief summary to user (task count, waves, key decisions)
-3. Execute **dev** mode (steps 1-10)
+0. **Git Check** — see above
+1. Generate timestamp `$TIMESTAMP` in `YYYYMMDD-HHMM` format
+2. Execute **plan** mode (steps 1-9)
+3. Log brief summary to user (task count, waves, key decisions)
+4. Execute **dev** mode (steps 1-11), passing plan path from step 2
+
+### Wrap Up (Autonomous)
+
+Automatically finalize without user interaction:
+1. Stage all changed files
+2. Commit with conventional commit message based on task
+3. Push branch to remote
+4. Create PR via `gh pr create` with plan summary as description
+5. Print PR URL to user
 
 ---
 
 ## Plan Template
 
-Write to `.claude/plans/plan.md`:
+Write to `.claude/plans/plan-$TIMESTAMP.md`:
 
 ```markdown
 # Plan: [Task Name]
@@ -252,7 +312,7 @@ Write to `.claude/plans/plan.md`:
 
 ## Report Template
 
-Write to `.claude/files/dev-report.md`:
+Write to `.claude/files/dev-report-$TIMESTAMP.md`:
 
 ```markdown
 # Development Report: [Task Name]

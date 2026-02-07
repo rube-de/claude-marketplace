@@ -5,7 +5,7 @@ description: "Spawn dev team: Orchestrator + Developer + Tester + Reviewer → i
 
 # /dev-task — Development Phase
 
-**Target:** $ARGUMENTS (Default: `.claude/plans/plan.md`)
+**Target:** $ARGUMENTS (pass the plan file path, e.g. `.claude/plans/plan-20260207-1430.md`)
 
 You are the **Lead** for the development phase. Create an agent team where Developer, Tester, and Reviewer collaborate as teammates with direct peer messaging for iteration loops.
 
@@ -20,23 +20,36 @@ You are the **Lead** for the development phase. Create an agent team where Devel
 
 ## Process
 
+### 0. Git Check
+
+1. Run `git branch --show-current`
+2. If on `main` or `master`:
+   - AskUserQuestion: "You're on the main branch. Create a feature branch before starting?"
+     Options: Create branch (Recommended) | Continue on main
+   - If create: suggest a branch name based on the task (e.g. `feat/rate-limiting`), then `git checkout -b <branch> origin/main`
+3. Run `git fetch origin && git pull` to ensure up-to-date
+
 ### 1. Parse Plan
 
-Read the plan file. Extract tasks, dependencies, waves. Check files-per-task for conflict avoidance.
+Read the plan file from `$ARGUMENTS`. Extract tasks, dependencies, waves. Check files-per-task for conflict avoidance.
 
-### 2. Create Team
+### 2. Generate Timestamp
+
+Generate a timestamp in `YYYYMMDD-HHMM` format for the dev report output path. Store as `$TIMESTAMP`.
+
+### 3. Create Team
 
 ```
 TeamCreate: team_name "dev-team"
 ```
 
-### 3. Create Tasks
+### 4. Create Tasks
 
 TaskCreate for each plan task (preserve `depends_on` via `addBlockedBy`). Also create:
 - "Test all implementations" — blocked by all impl tasks
 - "Review all implementations" — blocked by test task
 
-### 4. Spawn Teammates
+### 5. Spawn Teammates
 
 **Developer**:
 ```
@@ -45,7 +58,7 @@ Task tool:
   name: "developer"
   model: opus
   prompt: >
-    You are the developer. Plan: .claude/plans/plan.md — read it first.
+    You are the developer. Plan: [plan-path] — read it first.
     Working directory: [path]
 
     1. Check TaskList, claim unblocked tasks (lowest ID first)
@@ -68,7 +81,7 @@ Task tool:
   name: "tester"
   model: sonnet
   prompt: >
-    You are the tester. Plan: .claude/plans/plan.md — read Testing Strategy.
+    You are the tester. Plan: [plan-path] — read Testing Strategy.
 
     1. Check TaskList — your task is blocked until implementation completes
     2. Wait for developer to message what they changed
@@ -89,7 +102,7 @@ Task tool:
   name: "reviewer"
   model: opus
   prompt: >
-    You are the code reviewer. Plan: .claude/plans/plan.md — read Architecture.
+    You are the code reviewer. Plan: [plan-path] — read Architecture.
 
     1. Check TaskList — your task is blocked until tests pass
     2. Wait for lead to activate you
@@ -104,7 +117,7 @@ Task tool:
     Be specific: file paths, line numbers, concrete fixes.
 ```
 
-### 5. Execute Waves
+### 6. Execute Waves
 
 For each wave:
 1. Assign tasks to developer (TaskUpdate `owner`)
@@ -121,7 +134,7 @@ After tests pass:
 8. Message reviewer: "Tests passing. Files: [list]. Begin review."
 9. Dev↔Reviewer iterate directly. Intervene only on escalation.
 
-### 6. Final Verification
+### 7. Final Verification
 
 After APPROVED:
 1. Run full test suite
@@ -129,13 +142,13 @@ After APPROVED:
 3. `rg "TODO|FIXME|HACK|XXX|stub" --type-not md`
 4. Update plan file to final state
 
-### 7. Cleanup
+### 8. Cleanup
 
 Shutdown all teammates, TeamDelete.
 
-### 8. Report
+### 9. Report
 
-Write `.claude/files/dev-report.md`:
+Write `.claude/files/dev-report-$TIMESTAMP.md`:
 
 ```markdown
 # Development Report: [Task Name]
@@ -164,6 +177,26 @@ Write `.claude/files/dev-report.md`:
 
 ## Known Limitations
 ```
+
+### 10. Wrap Up
+
+Ask user:
+```
+AskUserQuestion:
+  "Development complete. Report written to .claude/files/dev-report-$TIMESTAMP.md. Ready to commit, push, and create a PR?"
+  Options: Create PR (Recommended) | Commit & push only | Skip
+```
+
+If creating PR:
+1. Stage changed files
+2. Commit with conventional commit message based on task
+3. Push branch
+4. Create PR with plan summary as description
+
+If commit & push only:
+1. Stage changed files
+2. Commit with conventional commit message based on task
+3. Push branch
 
 ## Rules
 

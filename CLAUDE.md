@@ -7,7 +7,7 @@
 | Plugin | Category | Version | Skill Triggers |
 |--------|----------|---------|----------------|
 | council | Code Review | 1.1.0 | `/council` |
-| claude-dev-team | Development | 1.0.0 | `/claude-dev-team` |
+| cdt | Development | 1.0.0 | `/cdt` |
 | project-manager | Productivity | — | `/project-manager` |
 | plugin-dev | Development | 1.0.0 | `/plugin-dev`, `/plugin-dev:create` |
 
