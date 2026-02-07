@@ -79,11 +79,10 @@ plugin-name/
 | Task | Command |
 |------|---------|
 | Validate plugins | `bun scripts/validate-plugins.mjs` |
-| Release (dry run) | `npm run release:dry` |
-| Release | `npm run release` |
 
 ## Conventions
 
 - **Marketplace SSoT**: All plugin metadata lives in `.claude-plugin/marketplace.json`
-- **Versioning**: Semantic release manages versions across all manifests
+- **Versioning**: Semantic-release via GitHub Actions on merge to `main` — do not edit versions manually
+- **Branching**: PRs against `main`, CI validates on PR, release runs on merge
 - **License**: MIT across all plugins
