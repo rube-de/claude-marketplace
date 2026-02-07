@@ -13,8 +13,8 @@ npx skills add rube-de/cc-skills --skill project-manager
 /plugin marketplace add rube-de/cc-skills
 
 # Install a plugin
-/plugin install council@rube-marketplace
-/plugin install claude-dev-team@rube-marketplace
+/plugin install council@rube-de/cc-skills
+/plugin install claude-dev-team@rube-de/cc-skills
 ```
 
 ## Plugins & Skills
