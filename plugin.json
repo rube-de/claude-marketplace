@@ -1,7 +1,7 @@
 {
   "name": "cc-skills",
   "version": "1.0.2",
-  "description": "A curated collection of Claude Code plugins: multi-agent dev team, AI council code reviews, and project management",
+  "description": "A curated collection of Claude Code plugins: multi-agent dev team, AI council code reviews, project management, and Temporal workflow orchestration",
   "author": {
     "name": "rube-de",
     "url": "https://github.com/rube-de"
