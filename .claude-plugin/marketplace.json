@@ -81,6 +81,26 @@
         "validation",
         "skill-authoring"
       ]
+    },
+    {
+      "name": "temporal",
+      "description": "Temporal durable execution platform: CLI commands, SDK patterns (Go, TypeScript, Python, Java), workflow orchestration, and architectural guidance for reliable distributed applications",
+      "version": "1.0.0",
+      "source": "./plugins/temporal",
+      "category": "development",
+      "author": {
+        "name": "rube-de",
+        "url": "https://github.com/rube-de"
+      },
+      "keywords": [
+        "temporal",
+        "workflow",
+        "orchestration",
+        "durable-execution",
+        "distributed-systems",
+        "sdk",
+        "cli"
+      ]
     }
   ]
 }
