@@ -1,0 +1,30 @@
+{
+  "name": "cc-skills",
+  "version": "1.1.0",
+  "private": true,
+  "description": "A curated collection of Claude Code plugins: multi-agent dev team, AI council code reviews, and project management",
+  "scripts": {
+    "validate": "bun scripts/validate-plugins.mjs",
+    "release:preflight": "test -z \"$(git status --porcelain)\" || (echo 'Working directory not clean' && git status --short && exit 1)",
+    "release": "npm run release:preflight && semantic-release --no-ci",
+    "release:dry": "npm run release:preflight && semantic-release --no-ci --dry-run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rube-de/cc-skills.git"
+  },
+  "author": "rube-de",
+  "license": "MIT",
+  "devDependencies": {
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/commit-analyzer": "^13.0.0",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^11.0.1",
+    "@semantic-release/release-notes-generator": "^14.0.1",
+    "ajv": "^8.17.1",
+    "semantic-release": "^25.0.0"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  }
+}

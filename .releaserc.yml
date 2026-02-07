@@ -1,0 +1,21 @@
+branches:
+  - main
+
+plugins:
+  - - "@semantic-release/commit-analyzer"
+    - releaseRules:
+        - { type: "docs", release: "patch" }
+        - { type: "chore", release: "patch" }
+        - { type: "style", release: "patch" }
+        - { type: "refactor", release: "patch" }
+        - { type: "test", release: "patch" }
+  - "@semantic-release/release-notes-generator"
+  - "@semantic-release/changelog"
+  - - "@semantic-release/git"
+    - assets:
+        - CHANGELOG.md
+        - package.json
+        - plugin.json
+        - .claude-plugin/marketplace.json
+      message: "chore(release): ${nextRelease.version} [skip ci]"
+  - "@semantic-release/github"

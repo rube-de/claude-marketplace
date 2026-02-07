@@ -1,20 +1,21 @@
 {
-  "name": "rube-de/cc-skills",
+  "name": "cc-skills",
+  "version": "1.1.0",
+  "description": "A curated collection of Claude Code plugins",
   "owner": {
-    "name": "rube-de"
-  },
-  "metadata": {
-    "description": "A curated collection of Claude Code plugins",
-    "version": "0.1.0",
-    "pluginRoot": "./plugins"
+    "name": "rube-de",
+    "url": "https://github.com/rube-de"
   },
   "plugins": [
     {
       "name": "council",
       "description": "AI Council - Orchestrate multiple AI consultants (Gemini, Codex, Qwen, GLM-4.7, Kimi K2.5) for consensus-driven code reviews, plan validation, and architectural decisions",
       "version": "1.1.0",
+      "source": "./plugins/council",
+      "category": "code-review",
       "author": {
-        "name": "rube-de"
+        "name": "rube-de",
+        "url": "https://github.com/rube-de"
       },
       "keywords": [
         "ai-council",
@@ -26,20 +27,17 @@
         "qwen",
         "glm",
         "kimi"
-      ],
-      "license": "MIT",
-      "source": {
-        "source": "local",
-        "path": "./plugins/council"
-      },
-      "category": "code-review"
+      ]
     },
     {
       "name": "claude-dev-team",
       "description": "Multi-agent development workflow with four modes: plan, dev, full, and auto. Uses Agent Teams for collaborative roles (Architect, PM, Developer, Tester, Reviewer) and a Researcher subagent for documentation lookups via Context7.",
       "version": "1.0.0",
+      "source": "./plugins/claude-dev-team",
+      "category": "development",
       "author": {
-        "name": "rube-de"
+        "name": "rube-de",
+        "url": "https://github.com/rube-de"
       },
       "keywords": [
         "agent-teams",
@@ -48,33 +46,24 @@
         "development",
         "code-review",
         "testing"
-      ],
-      "license": "MIT",
-      "source": {
-        "source": "local",
-        "path": "./plugins/claude-dev-team"
-      },
-      "category": "development"
+      ]
     },
     {
       "name": "project-manager",
       "description": "Interactive issue creation optimized for LLM agent teams with type-specific question flows and structured GitHub issues",
-      "version": "0.1.0",
+      "version": "1.0.0",
+      "source": "./plugins/project-manager",
+      "category": "productivity",
       "author": {
-        "name": "rube-de"
+        "name": "rube-de",
+        "url": "https://github.com/rube-de"
       },
       "keywords": [
         "project-management",
         "github-issues",
         "issue-creation",
         "task-planning"
-      ],
-      "license": "MIT",
-      "source": {
-        "source": "local",
-        "path": "./plugins/project-manager"
-      },
-      "category": "productivity"
+      ]
     }
   ]
 }

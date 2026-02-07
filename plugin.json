@@ -1,0 +1,21 @@
+{
+  "name": "cc-skills",
+  "version": "1.1.0",
+  "description": "A curated collection of Claude Code plugins: multi-agent dev team, AI council code reviews, and project management",
+  "author": {
+    "name": "rube-de",
+    "url": "https://github.com/rube-de"
+  },
+  "license": "MIT",
+  "repository": "https://github.com/rube-de/cc-skills",
+  "keywords": [
+    "claude-code",
+    "claude-code-plugin",
+    "agent-teams",
+    "multi-agent",
+    "code-review",
+    "ai-council",
+    "project-management",
+    "skills"
+  ]
+}

@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/rube-de/cc-skills/marketplace.schema.json",
+  "title": "Claude Code Skills Marketplace",
+  "description": "JSON Schema for cc-skills marketplace.json plugin registry",
+  "type": "object",
+  "required": ["name", "version", "description", "owner", "plugins"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Marketplace name"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Marketplace version (semver)"
+    },
+    "description": {
+      "type": "string",
+      "description": "Marketplace description"
+    },
+    "owner": {
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "url": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "plugins": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["name", "description", "version", "source", "category"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[a-z0-9-]+$",
+            "description": "Plugin name (kebab-case)"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 10,
+            "description": "Plugin description (min 10 chars)"
+          },
+          "version": {
+            "type": "string",
+            "pattern": "^\\d+\\.\\d+\\.\\d+$",
+            "description": "Plugin version (semver)"
+          },
+          "source": {
+            "type": "string",
+            "pattern": "^\\./plugins/[a-z0-9-]+$",
+            "description": "Plugin source path (./plugins/name)"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "code-review",
+              "development",
+              "productivity",
+              "quality",
+              "automation",
+              "documentation",
+              "devops",
+              "utilities"
+            ],
+            "description": "Plugin category"
+          },
+          "author": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string", "minLength": 1 },
+              "url": { "type": "string" }
+            },
+            "additionalProperties": false
+          },
+          "keywords": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "type": "string", "minLength": 1 },
+            "description": "Plugin keywords for discovery"
+          },
+          "hooks": {
+            "type": "string",
+            "pattern": "^\\./plugins/[a-z0-9-]+/hooks/hooks\\.json$",
+            "description": "Optional hooks configuration path"
+          },
+          "requires": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Required plugin dependencies"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}
