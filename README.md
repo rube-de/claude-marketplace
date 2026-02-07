@@ -10,7 +10,7 @@ A monorepo of [Claude Code](https://docs.anthropic.com/en/docs/claude-code) plug
 | Plugin | Category | Install | Description |
 |--------|----------|---------|-------------|
 | [council](./plugins/council/) | Code Review | Plugin or Skill | Orchestrate Gemini, Codex, Qwen, GLM-4.7, and Kimi K2.5 for consensus-driven reviews |
-| [claude-dev-team](./plugins/claude-dev-team/) | Development | Plugin only | Multi-agent dev team with four modes: plan, dev, full, and auto via Agent Teams |
+| [cdt](./plugins/cdt/) | Development | Plugin only | Multi-agent dev team with four modes: plan, dev, full, and auto via Agent Teams |
 | [project-manager](./plugins/project-manager/) | Productivity | Plugin or Skill | Interactive issue creation optimized for LLM agent teams |
 | [plugin-dev](./plugins/plugin-dev/) | Development | Plugin or Skill | Scaffold plugins, validate SKILL.md frontmatter, audit hooks |
 
@@ -33,7 +33,7 @@ Run these commands in your **terminal** (not inside Claude Code):
 claude plugin marketplace add rube-de/cc-skills
 
 # 2. Install all plugins
-for p in council claude-dev-team project-manager plugin-dev; do claude plugin install "$p@rube-cc-skills"; done
+for p in council cdt project-manager plugin-dev; do claude plugin install "$p@rube-cc-skills"; done
 
 # 3. Restart Claude Code to activate
 claude
@@ -61,7 +61,7 @@ claude plugin marketplace list
 ```bash
 # Install individual plugins
 claude plugin install council@rube-cc-skills
-claude plugin install claude-dev-team@rube-cc-skills
+claude plugin install cdt@rube-cc-skills
 claude plugin install project-manager@rube-cc-skills
 claude plugin install plugin-dev@rube-cc-skills
 ```
@@ -81,7 +81,7 @@ claude
 claude plugin list | grep rube-cc-skills
 
 # Inside Claude Code, type "/" and look for:
-#   /council, /claude-dev-team, /project-manager, /plugin-dev
+#   /council, /cdt, /project-manager, /plugin-dev
 ```
 
 ### Skills (via [skills.sh](https://skills.sh))
@@ -101,7 +101,7 @@ npx skills add rube-de/cc-skills --skill '*'
 ```
 
 > [!NOTE]
-> **Not all plugins work as standalone skills.** `claude-dev-team` requires plugin install because its interface is command-based (`/plan-task`, `/dev-task`, etc.). `council` works as a skill but loses preflight hooks and JSON validation. `project-manager` is fully equivalent either way.
+> **Not all plugins work as standalone skills.** `cdt` requires plugin install because its interface is command-based (`/cdt:plan-task`, `/cdt:dev-task`, etc.). `council` works as a skill but loses preflight hooks and JSON validation. `project-manager` is fully equivalent either way.
 
 ## Structure
 
@@ -116,12 +116,12 @@ cc-skills/
 │   │   ├── hooks/           # Pre/post tool-use hooks
 │   │   ├── scripts/         # Validation scripts
 │   │   └── skills/          # council, council-reference
-│   ├── claude-dev-team/     # Multi-agent dev team
+│   ├── cdt/                 # Multi-agent dev team
 │   │   ├── agents/          # Researcher subagent
 │   │   ├── commands/        # Task workflow commands
 │   │   ├── hooks/           # Session start hooks
 │   │   ├── scripts/         # Agent team checks
-│   │   └── skills/          # claude-dev-team
+│   │   └── skills/          # cdt
 │   ├── project-manager/     # Issue creation
 │   │   └── skills/          # project-manager
 │   └── plugin-dev/          # Plugin development tools

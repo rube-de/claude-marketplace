@@ -30,10 +30,10 @@
       ]
     },
     {
-      "name": "claude-dev-team",
+      "name": "cdt",
       "description": "Multi-agent development workflow with four modes: plan, dev, full, and auto. Uses Agent Teams for collaborative roles (Architect, PM, Developer, Tester, Reviewer) and a Researcher subagent for documentation lookups via Context7.",
       "version": "1.0.0",
-      "source": "./plugins/claude-dev-team",
+      "source": "./plugins/cdt",
       "category": "development",
       "author": {
         "name": "rube-de",

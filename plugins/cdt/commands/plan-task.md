@@ -19,24 +19,37 @@ You are the **Lead** for the planning phase. Create an agent team with an Archit
 
 ## Process
 
-### 1. Explore
+### 0. Git Check
+
+1. Run `git branch --show-current`
+2. If on `main` or `master`:
+   - AskUserQuestion: "You're on the main branch. Create a feature branch before starting?"
+     Options: Create branch (Recommended) | Continue on main
+   - If create: suggest a branch name based on the task (e.g. `feat/rate-limiting`), then `git checkout -b <branch> origin/main`
+3. Run `git fetch origin && git pull` to ensure up-to-date
+
+### 1. Generate Timestamp
+
+Generate a timestamp in `YYYYMMDD-HHMM` format (e.g. `20260207-1430`). Use this for the plan output path. Store as `$TIMESTAMP`.
+
+### 2. Explore
 
 Read referenced files, explore codebase (Glob/Grep), identify stack and patterns. If requirements are ambiguous — ask the user via AskUserQuestion with recommendations.
 
-### 2. Create Team
+### 3. Create Team
 
 ```
 TeamCreate: team_name "plan-team"
 ```
 
-### 3. Create Tasks
+### 4. Create Tasks
 
 TaskCreate:
 1. "Research libraries and patterns" — you handle via Researcher subagent
 2. "Design architecture" — for Architect
 3. "Validate requirements" — for PM (blocked by #2)
 
-### 4. Launch (parallel)
+### 5. Launch (parallel)
 
 Spawn all three simultaneously:
 
@@ -86,7 +99,7 @@ Task tool:
     Stack: [detected]. Return structured findings with code examples.
 ```
 
-### 5. Coordinate
+### 6. Coordinate
 
 1. **When Researcher returns** — SendMessage findings to "architect"
 2. **When Architect needs docs** — spawn another Researcher subagent, relay results
@@ -94,9 +107,9 @@ Task tool:
 4. **When PM validates** — if NEEDS_REVISION, forward feedback to Architect (max 2 cycles)
 5. **If they disagree** — you decide based on requirements + research
 
-### 6. Save Plan
+### 7. Save Plan
 
-Write `.claude/plans/plan.md`:
+Write `.claude/plans/plan-$TIMESTAMP.md`:
 
 ```markdown
 # Plan: [Task Name]
@@ -149,11 +162,13 @@ Write `.claude/plans/plan.md`:
 [PM verdict]
 ```
 
-### 7. Cleanup
+### 8. Cleanup
 
 Shutdown teammates (SendMessage `shutdown_request`), then TeamDelete.
 
-### 8. Present
+### 9. Present
+
+Tell the user the plan path: `.claude/plans/plan-$TIMESTAMP.md`
 
 Summarize: task count, waves, key decisions, risks.
 
@@ -161,7 +176,7 @@ Summarize: task count, waves, key decisions, risks.
 
 - Architect + PM are teammates — they debate directly
 - Researcher is a subagent — Lead relays results
-- Write plan.md to disk — handoff artifact for `/dev-task`
+- Write plan to disk — handoff artifact for `/cdt:dev-task`
 - Every task declares `depends_on`
 - Always cleanup the team before finishing
 - Do NOT implement — only plan

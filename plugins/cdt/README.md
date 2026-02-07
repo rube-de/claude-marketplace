@@ -1,4 +1,4 @@
-# claude-dev-team
+# cdt
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Skills](https://img.shields.io/badge/Skills-1-blue.svg)]()
@@ -56,30 +56,30 @@ Planning Phase                    Development Phase
 
 | Command | Purpose | Approval Gate | Output |
 |---------|---------|---------------|--------|
-| `/plan-task` | Planning only | N/A | `.claude/plans/plan.md` |
-| `/dev-task` | Develop from existing plan | N/A | Updated plan + `dev-report.md` |
-| `/full-task` | Complete workflow | **Yes** (user choice) | `plan.md` + `dev-report.md` |
-| `/auto-task` | Autonomous end-to-end | No | `plan.md` + `dev-report.md` |
+| `/cdt:plan-task` | Planning only | N/A | `.claude/plans/plan-YYYYMMDD-HHMM.md` |
+| `/cdt:dev-task` | Develop from existing plan | N/A | Updated plan + `dev-report-YYYYMMDD-HHMM.md` |
+| `/cdt:full-task` | Complete workflow | **Yes** (user choice) | `plan.md` + `dev-report.md` (timestamped) |
+| `/cdt:auto-task` | Autonomous end-to-end | No | `plan.md` + `dev-report.md` (timestamped) |
 
-### `/plan-task` — Design Phase
+### `/cdt:plan-task` — Design Phase
 
 Spawns Architect + PM + Researcher. The Architect designs the solution, the PM validates requirements and challenges the architecture, and the Researcher looks up library docs and patterns.
 
-**Output**: `.claude/plans/plan.md` with architecture, file changes, task breakdown with dependency ordering, execution waves, testing strategy, and risk assessment.
+**Output**: `.claude/plans/plan-YYYYMMDD-HHMM.md` with architecture, file changes, task breakdown with dependency ordering, execution waves, testing strategy, and risk assessment.
 
-### `/dev-task` — Implementation Phase
+### `/cdt:dev-task` — Implementation Phase
 
 Spawns Developer + Tester + Reviewer + Researcher. Executes tasks wave-by-wave from the plan, with parallel tasks within each wave and sequential ordering between waves.
 
-**Output**: Updated `plan.md` + `.claude/files/dev-report.md` with execution summary, changes made, test results, and review outcomes.
+**Output**: Updated plan + `.claude/files/dev-report-YYYYMMDD-HHMM.md` with execution summary, changes made, test results, and review outcomes.
 
-### `/full-task` — Plan + Approve + Dev
+### `/cdt:full-task` — Plan + Approve + Dev
 
-Runs `/plan-task`, presents the plan to the user for approval (Approve / Revise / Cancel), then runs `/dev-task` on approval.
+Runs `/cdt:plan-task`, presents the plan to the user for approval (Approve / Revise / Cancel), then runs `/cdt:dev-task` on approval.
 
-### `/auto-task` — Autonomous Mode
+### `/cdt:auto-task` — Autonomous Mode
 
-Same as `/full-task` but skips the approval gate. Proceeds directly from planning to development.
+Same as `/cdt:full-task` but skips the approval gate. Proceeds directly from planning to development.
 
 ## Hooks
 
@@ -101,7 +101,7 @@ The Researcher is always a subagent (not a teammate) — the Lead relays finding
 
 ## Installation
 
-This is a **Claude Code plugin only** — it cannot be installed as a standalone skill via skills.sh. The plugin depends on commands (`/plan-task`, `/dev-task`, `/full-task`, `/auto-task`), hooks, and an agent definition that are not available through skill-only install.
+This is a **Claude Code plugin only** — it cannot be installed as a standalone skill via skills.sh. The plugin depends on commands (`/cdt:plan-task`, `/cdt:dev-task`, `/cdt:full-task`, `/cdt:auto-task`), hooks, and an agent definition that are not available through skill-only install.
 
 ### Plugin Install
 
@@ -110,7 +110,7 @@ This is a **Claude Code plugin only** — it cannot be installed as a standalone
 claude plugin marketplace add rube-de/cc-skills
 
 # 2. Install the plugin
-claude plugin install claude-dev-team@rube-cc-skills
+claude plugin install cdt@rube-cc-skills
 
 # 3. Restart Claude Code
 claude
@@ -129,16 +129,16 @@ export CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1
 
 ```bash
 # Plan a feature
-/plan-task Add rate limiting to the API endpoints
+/cdt:plan-task Add rate limiting to the API endpoints
 
 # Develop from an existing plan
-/dev-task .claude/plans/plan.md
+/cdt:dev-task .claude/plans/plan-20260207-1430.md
 
 # Full workflow with approval gate
-/full-task Implement user authentication with JWT
+/cdt:full-task Implement user authentication with JWT
 
 # Autonomous end-to-end
-/auto-task Add dark mode support to the UI
+/cdt:auto-task Add dark mode support to the UI
 ```
 
 ## Dependencies
@@ -156,15 +156,15 @@ export CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1
 | "Agent Teams not enabled" | Missing env var | Set `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` |
 | Researcher returns empty | Context7 unavailable | Falls back to WebSearch; check MCP config |
 | Teammates not responding | Team creation failed | Ensure Agent Teams feature is enabled and restart |
-| Dev-task can't find plan | Wrong path | Default is `.claude/plans/plan.md`; pass custom path as argument |
+| Dev-task can't find plan | Wrong path | Pass the timestamped plan path as argument |
 | Stuck in iteration loop | Max cycles exceeded | After 3 cycles, escalates to user automatically |
 | File conflicts between tasks | Parallel task overlap | Tasks in same wave should not touch same files |
 
 ## References
 
-- [SKILL.md](skills/claude-dev-team/SKILL.md) — Full skill definition
-- [WORKFLOW.md](skills/claude-dev-team/references/WORKFLOW.md) — Detailed execution workflows
-- [researcher-prompt.md](skills/claude-dev-team/references/researcher-prompt.md) — Researcher instructions
+- [SKILL.md](skills/cdt/SKILL.md) — Full skill definition
+- [WORKFLOW.md](skills/cdt/references/WORKFLOW.md) — Detailed execution workflows
+- [researcher-prompt.md](skills/cdt/references/researcher-prompt.md) — Researcher instructions
 
 ## License
 
