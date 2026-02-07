@@ -21,9 +21,70 @@ A monorepo of [Claude Code](https://docs.anthropic.com/en/docs/claude-code) plug
 |-------------|-------|---------|
 | Claude Code CLI | `claude --version` | [Getting Started](https://docs.anthropic.com/en/docs/claude-code/getting-started) |
 
+### Quick Start (Recommended)
+
+Run these commands in your **terminal** (not inside Claude Code):
+
+```bash
+# 1. Add the marketplace
+claude plugin marketplace add rube-de/cc-skills
+
+# 2. Install all plugins
+for p in council claude-dev-team project-manager; do claude plugin install "$p@rube-cc-skills"; done
+
+# 3. Restart Claude Code to activate
+claude
+```
+
+### Step-by-Step Installation
+
+#### Step 1: Add the Marketplace
+
+```bash
+claude plugin marketplace add rube-de/cc-skills
+```
+
+This clones the marketplace to `~/.claude/plugins/marketplaces/rube-cc-skills/`.
+
+**Verify:**
+
+```bash
+claude plugin marketplace list
+# Should show: rube-cc-skills - Source: GitHub (rube-de/cc-skills)
+```
+
+#### Step 2: Install Plugins
+
+```bash
+# Install individual plugins
+claude plugin install council@rube-cc-skills
+claude plugin install claude-dev-team@rube-cc-skills
+claude plugin install project-manager@rube-cc-skills
+```
+
+#### Step 3: Restart Claude Code
+
+Plugins require a **fresh session** to take effect:
+
+```bash
+claude
+```
+
+### Verify Installation
+
+```bash
+# Check installed plugins
+claude plugin list | grep rube-cc-skills
+
+# Inside Claude Code, type "/" and look for:
+#   /council, /claude-dev-team, /project-manager
+```
+
 ### Skills (via [skills.sh](https://skills.sh))
 
-```sh
+Alternatively, install as standalone skills (no marketplace required):
+
+```bash
 # List available skills
 npx skills add rube-de/cc-skills --list
 
@@ -33,18 +94,6 @@ npx skills add rube-de/cc-skills --skill council
 
 # Install all skills
 npx skills add rube-de/cc-skills --skill '*'
-```
-
-### Plugins (via Claude Code marketplace)
-
-```sh
-# Add the marketplace
-claude plugin marketplace add rube-de/cc-skills
-
-# Install plugins
-claude plugin install council@rube-de/cc-skills
-claude plugin install claude-dev-team@rube-de/cc-skills
-claude plugin install project-manager@rube-de/cc-skills
 ```
 
 ## Structure
@@ -74,20 +123,41 @@ cc-skills/
 └── LICENSE                  # MIT
 ```
 
+## Updating
+
+When new versions are released:
+
+```bash
+cd ~/.claude/plugins/marketplaces/rube-cc-skills && git pull
+claude plugin install council@rube-cc-skills  # reinstall updated plugins
+```
+
 ## Troubleshooting
 
 ### "Source path does not exist" Error
 
-The marketplace repo may be out of sync.
+**Cause:** Marketplace repository is out of sync.
 
 ```bash
-cd ~/.claude/plugins/marketplaces/cc-skills && git pull
-claude plugin install plugin-name@rube-de/cc-skills
+cd ~/.claude/plugins/marketplaces/rube-cc-skills && git pull
+claude plugin install plugin-name@rube-cc-skills
+```
+
+### "Plugin not found in marketplace" Error
+
+**Cause:** Using the GitHub path instead of the marketplace name in the install command.
+
+```bash
+# WRONG
+claude plugin install council@rube-de/cc-skills
+
+# CORRECT
+claude plugin install council@rube-cc-skills
 ```
 
 ### Slash Commands Not Appearing
 
-1. Verify the plugin is installed: `cat ~/.claude/plugins/installed_plugins.json | grep cc-skills`
+1. Verify the plugin is installed: `claude plugin list | grep rube-cc-skills`
 2. Restart Claude Code (fresh session required)
 
 ### Hooks Not Working
@@ -101,6 +171,8 @@ cat ~/.claude/settings.json | jq '.hooks | keys'
 
 ## For Plugin Developers
 
+See [docs/PLUGIN-AUTHORING.md](./docs/PLUGIN-AUTHORING.md) for the full authoring guide.
+
 ### Plugin Structure
 
 ```
@@ -112,7 +184,65 @@ my-plugin/
 └── skills/       → SKILL.md + references/
 ```
 
-### marketplace.json Entry
+All directories are optional — a plugin only needs to provide what it uses.
+
+### Critical Schema Requirements
+
+Based on compatibility with Claude Code's plugin loader:
+
+#### 1. Source Paths (marketplace.json)
+
+**DO NOT** use trailing slashes in `source` paths:
+
+```json
+// CORRECT
+"source": "./plugins/my-plugin"
+
+// WRONG - causes "Source path does not exist" error
+"source": "./plugins/my-plugin/"
+```
+
+#### 2. Author Field (plugin.json)
+
+The `author` field **must** be an object, not a string:
+
+```json
+// CORRECT
+"author": {
+  "name": "Your Name",
+  "url": "https://github.com/username"
+}
+
+// WRONG - causes validation error
+"author": "Your Name"
+```
+
+#### 3. No Custom Fields (plugin.json)
+
+Only standard fields are allowed. These cause validation errors:
+
+```json
+// WRONG - unrecognized keys
+"commands_dir": "commands",
+"references_dir": "references"
+```
+
+### Valid plugin.json Example
+
+```json
+{
+  "name": "my-plugin",
+  "version": "1.0.0",
+  "description": "Plugin description (min 10 chars)",
+  "keywords": ["keyword1", "keyword2"],
+  "author": {
+    "name": "Your Name",
+    "url": "https://github.com/username"
+  }
+}
+```
+
+### Valid marketplace.json Entry
 
 ```json
 {
@@ -125,7 +255,8 @@ my-plugin/
     "name": "Your Name",
     "url": "https://github.com/username"
   },
-  "keywords": ["keyword1", "keyword2"]
+  "keywords": ["keyword1", "keyword2"],
+  "strict": false
 }
 ```
 
@@ -134,6 +265,38 @@ my-plugin/
 ```bash
 bun scripts/validate-plugins.mjs
 ```
+
+Checks: JSON Schema validation, source paths exist, no orphaned plugin directories.
+
+## Release Workflow (for maintainers)
+
+This marketplace uses [semantic-release](https://semantic-release.gitbook.io/) with conventional commits and GitHub Actions. Versions are managed automatically — **do not manually edit version numbers**.
+
+### How It Works
+
+1. Create a branch and open a PR against `main`
+2. CI runs plugin validation on the PR ([`.github/workflows/ci.yml`](./.github/workflows/ci.yml))
+3. Merge the PR to `main`
+4. Release workflow runs automatically ([`.github/workflows/release.yml`](./.github/workflows/release.yml))
+5. semantic-release bumps versions, updates CHANGELOG, creates GitHub release
+6. Users update via `git pull` in their marketplace clone
+
+### Version Bumps
+
+Semantic-release determines the next version from commit messages:
+
+| Commit Type | Release |
+|-------------|---------|
+| `feat:` | minor |
+| `fix:` | patch |
+| `docs:`, `chore:`, `style:`, `refactor:`, `test:` | patch |
+| `BREAKING CHANGE:` in footer | major |
+
+Files bumped on release:
+- `package.json`
+- `plugin.json`
+- `.claude-plugin/marketplace.json`
+- `CHANGELOG.md` (generated)
 
 ## Contributing
 

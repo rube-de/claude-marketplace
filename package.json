@@ -4,10 +4,7 @@
   "private": true,
   "description": "A curated collection of Claude Code plugins: multi-agent dev team, AI council code reviews, and project management",
   "scripts": {
-    "validate": "bun scripts/validate-plugins.mjs",
-    "release:preflight": "test -z \"$(git status --porcelain)\" || (echo 'Working directory not clean' && git status --short && exit 1)",
-    "release": "npm run release:preflight && semantic-release --no-ci",
-    "release:dry": "npm run release:preflight && semantic-release --no-ci --dry-run"
+    "validate": "bun scripts/validate-plugins.mjs"
   },
   "repository": {
     "type": "git",
