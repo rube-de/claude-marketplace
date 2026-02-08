@@ -1,3 +1,16 @@
+# [1.2.0](https://github.com/rube-de/cc-skills/compare/v1.1.1...v1.2.0) (2026-02-08)
+
+
+### Bug Fixes
+
+* add graceful shutdown wait and delegate mode tip to CDT cleanup procedures ([d787680](https://github.com/rube-de/cc-skills/commit/d787680e860fa4be021d967762e5fa27c5376030))
+* use "teammate" phrasing in CDT commands for reliable Agent Teams triggering ([e8cb6e6](https://github.com/rube-de/cc-skills/commit/e8cb6e6de307a54e4d7d1fe8f72816e49f0e1fb7))
+
+
+### Features
+
+* split CDT tester into code-tester and conditional ux-tester ([0670054](https://github.com/rube-de/cc-skills/commit/06700549342b4657be8b9268cbb623dd37da3c31))
+
 ## [1.1.1](https://github.com/rube-de/cc-skills/compare/v1.1.0...v1.1.1) (2026-02-08)
 
 # [1.1.0](https://github.com/rube-de/cc-skills/compare/v1.0.2...v1.1.0) (2026-02-08)
