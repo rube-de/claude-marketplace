@@ -1,3 +1,10 @@
+## [1.2.5](https://github.com/rube-de/cc-skills/compare/v1.2.4...v1.2.5) (2026-02-08)
+
+
+### Bug Fixes
+
+* **doppler:** clean apt cache in Dockerfile pattern ([#18](https://github.com/rube-de/cc-skills/issues/18)) ([7f78b40](https://github.com/rube-de/cc-skills/commit/7f78b40fc1de868cd6dde0c7bdbb0ac93ceb7a67)), closes [#16](https://github.com/rube-de/cc-skills/issues/16)
+
 ## [1.2.4](https://github.com/rube-de/cc-skills/compare/v1.2.3...v1.2.4) (2026-02-08)
 
 
