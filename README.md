@@ -95,16 +95,42 @@ claude plugin list | grep rube-cc-skills
 
 Alternatively, install as standalone skills (no marketplace required). This installs only skill definitions — no hooks, agents, or commands.
 
+By default, `npx skills` installs skills at **project scope** (`.claude/` in the current directory). Use `-g` for global (user-level) install, or `-a claude-code` to install specifically for Claude Code:
+
 ```bash
 # List available skills
 npx skills add rube-de/cc-skills --list
 
-# Install specific skills
+# Install specific skills (project scope by default)
 npx skills add rube-de/cc-skills --skill project-manager
 npx skills add rube-de/cc-skills --skill council
 
 # Install all skills
 npx skills add rube-de/cc-skills --skill '*'
+
+# Install globally (user-level, available everywhere)
+npx skills add rube-de/cc-skills --skill council -g
+
+# Install for Claude Code specifically
+npx skills add rube-de/cc-skills --skill council -a claude-code
+```
+
+#### Updating Skills
+
+```bash
+npx skills update
+```
+
+This updates all installed skills to their latest versions.
+
+#### Removing Skills
+
+```bash
+# Interactive removal (select which skills to remove)
+npx skills remove
+
+# Remove a specific skill
+npx skills remove --skill council
 ```
 
 > [!NOTE]
@@ -182,11 +208,44 @@ cc-skills/
 
 ## Updating
 
-When new versions are released:
+### Updating Plugins
+
+When new versions are released, pull the latest marketplace and reinstall. Reinstalling overwrites existing plugins — no need to remove them first.
+
+```bash
+# 1. Pull the latest marketplace
+cd ~/.claude/plugins/marketplaces/rube-cc-skills && git pull
+
+# 2. Reinstall a single plugin
+claude plugin install council@rube-cc-skills
+
+# Or reinstall all plugins
+for p in council cdt project-manager plugin-dev temporal doppler; do
+  claude plugin install "$p@rube-cc-skills"
+done
+
+# 3. Restart Claude Code to activate changes
+claude
+```
+
+For **project-scoped** plugins, add `--scope project` and re-commit:
 
 ```bash
 cd ~/.claude/plugins/marketplaces/rube-cc-skills && git pull
-claude plugin install council@rube-cc-skills  # reinstall updated plugins
+
+for p in council cdt project-manager plugin-dev temporal doppler; do
+  claude plugin install "$p@rube-cc-skills" --scope project
+done
+
+git add .claude/ && git commit -m "chore: update plugins"
+```
+
+### Updating Skills
+
+If you installed via [skills.sh](https://skills.sh):
+
+```bash
+npx skills update
 ```
 
 ## Troubleshooting
