@@ -1,3 +1,18 @@
+# [1.1.0](https://github.com/rube-de/cc-skills/compare/v1.0.2...v1.1.0) (2026-02-08)
+
+
+### Bug Fixes
+
+* use GitHub App token in release workflow to bypass branch protection ([cbd979c](https://github.com/rube-de/cc-skills/commit/cbd979c3b0a2264262c13fa71ba2388c5d748808))
+
+
+### Features
+
+* add Doppler secrets management skill plugin ([3bc6f27](https://github.com/rube-de/cc-skills/commit/3bc6f27193ebbbc408e6d2782f87964e69064aca))
+* add plugin-dev plugin for scaffolding, validation, and hook auditing ([c189b87](https://github.com/rube-de/cc-skills/commit/c189b870afbb7dfdd0ebeacabc1b4167b419a777))
+* add Temporal durable execution skill plugin ([de339c8](https://github.com/rube-de/cc-skills/commit/de339c8c401399ba004e0300f91967565f368d91))
+* rename claude-dev-team to cdt, add datetime postfix and git workflow ([77f6c92](https://github.com/rube-de/cc-skills/commit/77f6c92fe0591a81217ecd5887916297dcd4cf72))
+
 ## [1.0.2](https://github.com/rube-de/cc-skills/compare/v1.0.1...v1.0.2) (2026-02-07)
 
 ## [1.0.1](https://github.com/rube-de/cc-skills/compare/v1.0.0...v1.0.1) (2026-02-07)
