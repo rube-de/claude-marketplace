@@ -1,3 +1,11 @@
+## [1.2.6](https://github.com/rube-de/cc-skills/compare/v1.2.5...v1.2.6) (2026-02-08)
+
+
+### Bug Fixes
+
+* **cdt:** block /cdt commands when Agent Teams is not enabled ([5591b70](https://github.com/rube-de/cc-skills/commit/5591b70fae63dd978bd13317effedb70f40e4db2))
+* **release:** update all plugin versions on release ([1431b90](https://github.com/rube-de/cc-skills/commit/1431b906ebc2636be68d5f8d7b482b20d98e60ba))
+
 ## [1.2.5](https://github.com/rube-de/cc-skills/compare/v1.2.4...v1.2.5) (2026-02-08)
 
 
