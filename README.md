@@ -26,27 +26,12 @@ A monorepo of [Claude Code](https://docs.anthropic.com/en/docs/claude-code) plug
 |-------------|-------|---------|
 | Claude Code CLI | `claude --version` | [Getting Started](https://docs.anthropic.com/en/docs/claude-code/getting-started) |
 
-### Quick Start (Recommended)
+### Getting Started (Recommended)
 
-Run these commands in your **terminal** (not inside Claude Code):
+Open Claude Code and type `/plugin` — this opens an interactive UI where you can add marketplaces, browse, install, and update plugins. Add the marketplace using the GitHub repo `rube-de/cc-skills`, then install the plugins you want.
 
-```bash
-# 1. Add the marketplace
-claude plugin marketplace add rube-de/cc-skills
-
-# 2. Install all plugins (user scope — local to your machine)
-for p in council cdt project-manager plugin-dev temporal doppler; do claude plugin install "$p@rube-cc-skills"; done
-
-# 3. Restart Claude Code to activate
-claude
-```
-
-> [!TIP]
-> For cloud agents or shared teams, use `--scope project` instead — see [Installation Scopes](#installation-scopes).
-
-### Step-by-Step Installation
-
-#### Step 1: Add the Marketplace
+<details>
+<summary><strong>Alternative: Add the marketplace from the terminal</strong></summary>
 
 ```bash
 claude plugin marketplace add rube-de/cc-skills
@@ -54,14 +39,13 @@ claude plugin marketplace add rube-de/cc-skills
 
 This clones the marketplace to `~/.claude/plugins/marketplaces/rube-cc-skills/`.
 
-**Verify:**
+</details>
 
-```bash
-claude plugin marketplace list
-# Should show: rube-cc-skills - Source: GitHub (rube-de/cc-skills)
-```
+> [!TIP]
+> After installing, restart Claude Code (fresh session) to activate the plugins. Type `/` and look for `/council`, `/cdt`, `/project-manager`, etc.
 
-#### Step 2: Install Plugins
+<details>
+<summary><strong>Alternative: Install from the terminal</strong></summary>
 
 ```bash
 # Install individual plugins
@@ -71,29 +55,24 @@ claude plugin install project-manager@rube-cc-skills
 claude plugin install plugin-dev@rube-cc-skills
 claude plugin install temporal@rube-cc-skills
 claude plugin install doppler@rube-cc-skills
-```
 
-#### Step 3: Restart Claude Code
+# Or install all at once
+for p in council cdt project-manager plugin-dev temporal doppler; do claude plugin install "$p@rube-cc-skills"; done
 
-Plugins require a **fresh session** to take effect:
-
-```bash
+# Restart Claude Code to activate
 claude
 ```
 
-### Verify Installation
+For cloud agents or shared teams, use `--scope project` instead — see [Installation Scopes](#installation-scopes).
 
-```bash
-# Check installed plugins
-claude plugin list | grep rube-cc-skills
+</details>
 
-# Inside Claude Code, type "/" and look for:
-#   /council, /cdt, /project-manager, /plugin-dev, /temporal, /doppler
-```
+### Skills via npx (Not Recommended)
 
-### Skills (via [skills.sh](https://skills.sh))
+> [!WARNING]
+> **We recommend installing via the plugin system instead of `npx skills`.** The plugin system gives you the full experience — hooks, agents, commands, and scripts. `npx skills` installs only bare SKILL.md definitions, which means you lose preflight hooks, JSON validation, agent definitions, and command-based interfaces. Several plugins (like `cdt`) don't work at all as standalone skills.
 
-Alternatively, install as standalone skills (no marketplace required). This installs only skill definitions — no hooks, agents, or commands.
+If you still want standalone skill definitions (no marketplace required):
 
 By default, `npx skills` installs skills at **project scope** (`.claude/` in the current directory). Use `-g` for global (user-level) install, or `-a claude-code` to install specifically for Claude Code:
 
@@ -115,6 +94,8 @@ npx skills add rube-de/cc-skills --skill council -g
 npx skills add rube-de/cc-skills --skill council -a claude-code
 ```
 
+Use `-g` for global install and `-a claude-code` to target Claude Code.
+
 #### Updating Skills
 
 ```bash
@@ -132,9 +113,6 @@ npx skills remove
 # Remove a specific skill
 npx skills remove --skill council
 ```
-
-> [!NOTE]
-> **Not all plugins work as standalone skills.** `cdt` requires plugin install because its interface is command-based (`/cdt:plan-task`, `/cdt:dev-task`, etc.). `council` works as a skill but loses preflight hooks and JSON validation. `project-manager` is fully equivalent either way.
 
 ### Installation Scopes
 
@@ -208,9 +186,11 @@ cc-skills/
 
 ## Updating
 
-### Updating Plugins
+When new versions are released, the easiest way to update is to type `/plugin` inside Claude Code and use the UI to update your plugins.
 
-When new versions are released, pull the latest marketplace and reinstall. Reinstalling overwrites existing plugins — no need to remove them first.
+### Updating Plugins from the Terminal
+
+Pull the latest marketplace and reinstall. Reinstalling overwrites existing plugins — no need to remove them first.
 
 ```bash
 # 1. Pull the latest marketplace
