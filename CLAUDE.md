@@ -10,6 +10,8 @@
 | cdt | Development | 1.0.0 | `/cdt` |
 | project-manager | Productivity | — | `/project-manager` |
 | plugin-dev | Development | 1.0.0 | `/plugin-dev`, `/plugin-dev:create` |
+| temporal | Development | 1.0.0 | `/temporal` |
+| doppler | DevOps | 1.0.0 | `/doppler` |
 
 ## Navigation
 
