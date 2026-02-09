@@ -33,9 +33,7 @@ Phase 1: plan-team               Phase 2: dev-team
 
 ## Phase 1: Planning
 
-Generate a timestamp `$TIMESTAMP` in `YYYYMMDD-HHMM` format at the start.
-
-Follow the planning workflow defined in @plan-task.md (skip Step 0 — Git Check was already done above).
+Follow the planning workflow defined in @plan-task.md (skip Step 0 — Git Check was already done above). plan-task.md generates its own `$TIMESTAMP` for the plan path.
 
 ## Bridge
 
@@ -43,7 +41,7 @@ Log a brief summary of the plan to the user (task count, waves, key decisions), 
 
 ## Phase 2: Development
 
-Follow the development workflow defined in @dev-task.md using the plan path from Phase 1 (skip Step 0 — Git Check was already done above).
+Follow the development workflow defined in @dev-task.md using the plan path from Phase 1 (skip Step 0 — Git Check was already done above). dev-task.md generates its own timestamp for the dev report.
 
 ## Wrap Up (Autonomous)
 
@@ -56,7 +54,7 @@ Automatically finalize without user interaction:
 
 ## Bridge
 
-`.claude/plans/plan-$TIMESTAMP.md` is the handoff:
+The plan file is the handoff (Lead carries the path between phases):
 - Phase 1 writes it (architecture, tasks, research)
 - Phase 2 reads and updates it (status, logs, files)
 - Lead's context spans both phases; teammate context does not
