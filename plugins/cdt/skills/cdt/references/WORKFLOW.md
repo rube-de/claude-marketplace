@@ -19,11 +19,10 @@ Task tool:
 Before any mode begins, check the current branch:
 
 1. Run `git fetch origin`
-2. Run `git branch --show-current` to get the current branch name
-3. If on `main` or `master`:
-   - Suggest a branch name based on the task (e.g. `feat/rate-limiting`)
-   - Run `git checkout -b <branch> origin/<current-branch>` to create the feature branch from the matching remote branch
-4. Run `git pull` to ensure up-to-date
+2. Ensure you are on `main` or `master` — if not, run `git checkout main` (or `master`, whichever exists)
+3. Suggest a branch name based on the task (e.g. `feat/rate-limiting`)
+4. Run `git checkout -b <branch> origin/<default-branch>` to create the feature branch from the latest remote default branch
+5. Run `git pull` to ensure up-to-date
 
 ---
 
