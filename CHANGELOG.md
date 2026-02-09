@@ -1,3 +1,11 @@
+## [1.6.1](https://github.com/rube-de/cc-skills/compare/v1.6.0...v1.6.1) (2026-02-09)
+
+
+### Bug Fixes
+
+* **cdt:** resolve timestamp conflicts flagged in PR review ([f08bf1c](https://github.com/rube-de/cc-skills/commit/f08bf1cb4c8faaf908dffec4e7cbe5adc7deed31))
+* **cdt:** use [@references](https://github.com/references) for plan-task and dev-task in orchestration commands ([c588976](https://github.com/rube-de/cc-skills/commit/c5889761231650d1a4619eba57e78ecbbfd500da))
+
 # [1.6.0](https://github.com/rube-de/cc-skills/compare/v1.5.0...v1.6.0) (2026-02-09)
 
 
