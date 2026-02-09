@@ -381,6 +381,82 @@ Round 1: Classify → Round 2: Details → Draft
 
 ---
 
+## Requirements Challenge Checklist
+
+Runs after every type-specific discovery flow (after Step 2 (Discovery) as Step 3 (Challenge) in SKILL.md). Systematically probe for
+underspecified requirements before proceeding to codebase exploration.
+
+### Completeness Check
+
+Before proceeding, verify:
+
+- [ ] Every noun is specific (not "the page" but "the user profile settings page")
+- [ ] Every action has defined outcomes (success, failure, edge cases)
+- [ ] UI elements have all relevant states defined
+- [ ] Scope boundaries are explicit (what's included AND excluded)
+- [ ] No implicit assumptions — everything is stated
+
+### Dimensions to Probe
+
+Challenge requirements across these dimensions. Not all apply to every issue type — use the
+relevance guide below.
+
+#### UI / Interaction (features, bugs, epics, new projects)
+- **Placement / layout position** — where exactly in the UI?
+- **Visual states** — default, hover, active, focused, disabled, loading, error
+- **Conditional visibility** — when shown? when hidden? who sees it?
+- **Responsive behavior** — mobile, tablet, desktop differences
+- **Accessibility** — keyboard navigation, screen reader, ARIA labels
+- **Animation / transitions** — any motion or state transitions?
+
+#### Behavior (features, bugs, refactors)
+- **Happy path** — what happens on success?
+- **Error path** — what happens on failure? what does the user see?
+- **Edge cases** — empty state, max values, concurrent actions, race conditions
+- **Loading / async states** — spinners, skeletons, optimistic updates?
+- **Undo / reversibility** — can the action be undone?
+
+#### Data (features, epics, new projects)
+- **Input validation rules** — what constraints on user input?
+- **Data format and constraints** — types, ranges, lengths
+- **Default values** — what's pre-filled or assumed?
+- **Required vs optional fields** — which inputs are mandatory?
+
+#### Integration (bugs, features, epics, refactors, chores)
+- **Impact on existing functionality** — does this change break anything?
+- **Backwards compatibility** — must old behavior still work?
+- **Migration requirements** — do existing users/data need migration?
+
+### Relevance Guide
+
+| Dimension | Bug | Feature | Epic | Refactor | New Project | Chore | Research |
+|-----------|-----|---------|------|----------|-------------|-------|----------|
+| UI/Interaction | ✓ | ✓ | ✓ | — | ✓ | — | — |
+| Behavior | ✓ | ✓ | ✓ | ✓ | ✓ | — | — |
+| Data | — | ✓ | ✓ | — | ✓ | — | — |
+| Integration | ✓ | ✓ | ✓ | ✓ | — | ✓ | — |
+
+### Mode-Specific Behavior
+
+**Default (critical) mode:**
+1. For each relevant dimension, check if the gathered requirements are specific enough
+2. Generate targeted follow-up questions for every gap
+3. Use `AskUserQuestion` for structured choices (batch related questions, max 4 per call)
+4. Use conversation for open-ended gaps
+5. Refuse to proceed until all critical gaps are resolved
+
+**Quick (`-quick`) mode:**
+1. For each relevant dimension, check if the gathered requirements are specific enough
+2. For each gap, propose a smart default with brief rationale
+3. Present all proposed defaults in a single confirmation round:
+   > "Here's what I'll assume for the unspecified details — confirm or correct:"
+   > - [Gap]: [Proposed default] *(rationale)*
+   > - [Gap]: [Proposed default] *(rationale)*
+4. Accept confirmation and proceed — only block if user raises concerns
+5. In the final issue body, tag each assumed detail: `[AGENT-DECIDED: rationale]`
+
+---
+
 ## Flow Selection Decision Tree
 
 ```
