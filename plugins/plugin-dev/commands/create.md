@@ -167,7 +167,129 @@ If validation fails, diagnose and fix automatically if possible. Common issues:
 - Description too short (< 10 chars) — ask user for a real description
 - Name not kebab-case — should have been caught in Step 1
 
-## Step 7: Summary
+## Step 7: Update Root Documentation
+
+After validation passes, update the three root documentation files to include the new plugin.
+
+### A. CLAUDE.md — Add row to plugin table
+
+Read `CLAUDE.md` and find the plugin table:
+
+```markdown
+| Plugin | Category | Skill Triggers |
+|--------|----------|----------------|
+...existing rows...
+```
+
+Add a new row at the end of the table:
+
+```
+| <name> | <Category> | `/<name>` |
+```
+
+If the plugin has commands (selected in Step 3), list those too. For example, if there is a command called `create`:
+
+```
+| <name> | <Category> | `/<name>`, `/<name>:create` |
+```
+
+Capitalize the category to match existing rows (e.g. `development` → `Development`, `code-review` → `Code Review`, `devops` → `DevOps`).
+
+### B. README.md — Four updates
+
+Read `README.md` and make these four changes:
+
+#### 1. Plugin count badge
+
+Find the badge line:
+
+```
+[![Plugins](https://img.shields.io/badge/plugins-N-green.svg)](#plugins)
+```
+
+Increment `N` by 1.
+
+#### 2. Plugin table
+
+Find the plugin table:
+
+```markdown
+| Plugin | Category | Install | Description |
+|--------|----------|---------|-------------|
+...existing rows...
+```
+
+Add a new row at the end of the table:
+
+```
+| [<name>](./plugins/<name>/) | <Category> | <Install> | <description> |
+```
+
+- Use `Plugin only` if the plugin has hooks or commands (i.e. it can't work as a standalone skill)
+- Use `Plugin or Skill` otherwise
+- Use the description from marketplace.json (or the user-provided description)
+
+#### 3. Install command lists
+
+Find **every** `for p in council cdt ... ; do` loop in the file. There are multiple (install all, project-scoped install, update). Append `<name>` to the plugin list in each loop.
+
+For example, change:
+
+```
+for p in council cdt project-manager plugin-dev temporal doppler oasis-dev; do
+```
+
+to:
+
+```
+for p in council cdt project-manager plugin-dev temporal doppler oasis-dev <name>; do
+```
+
+Also find the individual `claude plugin install` commands listed one per line and add:
+
+```
+claude plugin install <name>@rube-cc-skills
+```
+
+after the last existing entry.
+
+#### 4. Directory structure tree
+
+Find the directory tree in the `## Structure` section. Add the new plugin entry before the closing `├── scripts/` line, maintaining alphabetical order among plugins. For example:
+
+```
+│   ├── <name>/              # <Short description>
+│   │   └── skills/          # <name> + references
+```
+
+If the plugin has additional components (hooks, commands, agents), include those subdirectories. Make sure the **last** plugin entry in the tree uses `└──` instead of `├──` for correct tree formatting.
+
+### C. AGENTS.md — Two updates
+
+Read `AGENTS.md` and make these two changes:
+
+#### 1. Plugin count
+
+Find the opening line:
+
+```
+Claude Code skills marketplace: **N plugins** for ...
+```
+
+Increment `N` by 1.
+
+#### 2. Directory structure tree
+
+Find the directory tree in the `## Directory Structure` section. Add the new plugin entry, maintaining alphabetical order among plugins. Follow the same pattern as existing entries:
+
+```
+│   ├── <name>/               ← <Short description>
+│   │   └── skills/           # <name> + references
+```
+
+If the plugin has additional components, include those subdirectories. Make sure the **last** plugin entry uses `└──` with `←` arrow style, and all others use `├──`.
+
+## Step 8: Summary
 
 Present a summary of what was created:
 
@@ -179,6 +301,9 @@ Present a summary of what was created:
   └── LICENSE
 ✓ Registered in .claude-plugin/marketplace.json
 ✓ Validation passed
+✓ Updated CLAUDE.md plugin table
+✓ Updated README.md (badge, table, install commands, directory tree)
+✓ Updated AGENTS.md (plugin count, directory tree)
 
 Next steps:
 1. Edit SKILL.md to define your skill's triggers and behavior
@@ -190,5 +315,4 @@ Next steps:
 ## Important Notes
 
 - Do NOT create a per-plugin `plugin.json` — marketplace.json is the SSoT
-- Do NOT modify CLAUDE.md or root README.md — those are updated manually or via separate PR
 - If the user provides a description during scaffolding, use it in both SKILL.md and marketplace.json
