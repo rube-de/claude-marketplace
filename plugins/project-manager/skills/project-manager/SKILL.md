@@ -109,7 +109,7 @@ for the full dimension list.
 3. Present all assumptions in a single summary: "Here's what I'll assume: [list]. Confirm or correct?"
 4. Proceed after one confirmation round — only block on truly ambiguous requirements where no
    reasonable default exists
-5. Tag every assumed detail in the final issue body with `[PM-PROPOSED: rationale]`
+5. Tag every assumed detail in the final issue body with `[AGENT-DECIDED: rationale]`
 
 **Example — "add a delete button to user profiles":**
 

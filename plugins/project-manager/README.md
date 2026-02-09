@@ -57,29 +57,32 @@ Before drafting, the plugin explores the repo to ensure:
 ## Workflow
 
 ```
-┌────────────────────────────────────────────────┐
-│               /project-manager                  │
-├────────────────────────────────────────────────┤
-│                                                │
-│  1. Classify — determine issue type            │
-│     (bug, feature, epic, refactor, etc.)       │
-│                                                │
-│  2. Discover — type-specific question flow     │
-│     (bounded choices + open-ended details)     │
-│                                                │
-│  3. Explore Codebase — find relevant files     │
-│     (Glob, Grep, Read for real paths)          │
-│                                                │
-│  4. Draft — generate issue from template       │
-│     (agent-optimized with VERIFY: criteria)    │
-│                                                │
-│  5. Review — present draft to user             │
-│     (approve, revise, or cancel)               │
-│                                                │
-│  6. Create — gh issue create with labels       │
-│     (title prefix, labels, body-file)          │
-│                                                │
-└────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────┐
+│            /project-manager [-quick]                 │
+├─────────────────────────────────────────────────────┤
+│                                                     │
+│  1. Classify — determine issue type                 │
+│     (bug, feature, epic, refactor, etc.)            │
+│                                                     │
+│  2. Discover — type-specific question flow          │
+│     (bounded choices + open-ended details)          │
+│                                                     │
+│  3. Challenge — probe underspecified requirements   │
+│     (critical: block on gaps, quick: smart defaults)│
+│                                                     │
+│  4. Explore Codebase — find relevant files          │
+│     (Glob, Grep, Read for real paths)               │
+│                                                     │
+│  5. Draft — generate issue from template            │
+│     (agent-optimized with VERIFY: criteria)         │
+│                                                     │
+│  6. Review — present draft to user                  │
+│     (approve, revise, or cancel)                    │
+│                                                     │
+│  7. Create — gh issue create with labels            │
+│     (title prefix, labels, body-file)               │
+│                                                     │
+└─────────────────────────────────────────────────────┘
 ```
 
 ## Issue Title Prefixes

@@ -383,7 +383,7 @@ Round 1: Classify → Round 2: Details → Draft
 
 ## Requirements Challenge Checklist
 
-Runs after every type-specific discovery flow (Step 3 in SKILL.md). Systematically probe for
+Runs after every type-specific discovery flow (after Step 2 (Discovery) as Step 3 (Challenge) in SKILL.md). Systematically probe for
 underspecified requirements before proceeding to codebase exploration.
 
 ### Completeness Check
@@ -401,7 +401,7 @@ Before proceeding, verify:
 Challenge requirements across these dimensions. Not all apply to every issue type — use the
 relevance guide below.
 
-#### UI / Interaction (features, bugs)
+#### UI / Interaction (features, bugs, epics, new projects)
 - **Placement / layout position** — where exactly in the UI?
 - **Visual states** — default, hover, active, focused, disabled, loading, error
 - **Conditional visibility** — when shown? when hidden? who sees it?
@@ -422,7 +422,7 @@ relevance guide below.
 - **Default values** — what's pre-filled or assumed?
 - **Required vs optional fields** — which inputs are mandatory?
 
-#### Integration (all types)
+#### Integration (bugs, features, epics, refactors, chores)
 - **Impact on existing functionality** — does this change break anything?
 - **Backwards compatibility** — must old behavior still work?
 - **Migration requirements** — do existing users/data need migration?
@@ -453,7 +453,7 @@ relevance guide below.
    > - [Gap]: [Proposed default] *(rationale)*
    > - [Gap]: [Proposed default] *(rationale)*
 4. Accept confirmation and proceed — only block if user raises concerns
-5. In the final issue body, tag each assumed detail: `[PM-PROPOSED: rationale]`
+5. In the final issue body, tag each assumed detail: `[AGENT-DECIDED: rationale]`
 
 ---
 
