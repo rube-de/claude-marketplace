@@ -41,10 +41,20 @@ This skill activates when users want to create work items for an agent team. Rec
 | Implicit | "we need to fix...", "let's add...", "can we refactor..." |
 | Shorthand | "/pm", "project manager", "create task" |
 
+## Arguments
+
+| Flag | Description |
+|------|-------------|
+| `-quick` | Quick mode — propose smart defaults instead of blocking on ambiguity |
+
+**Usage:** `/project-manager -quick add a delete button to user profiles`
+
+Parse the first argument for `-quick`. If present, activate quick mode. Everything after the flag is the task description.
+
 ## Core Workflow
 
 ```
-1. Classify → 2. Discover → 3. Explore Codebase → 4. Draft → 5. Review → 6. Create
+1. Classify → 2. Discover → 3. Challenge → 4. Explore Codebase → 5. Draft → 6. Review → 7. Create
 ```
 
 ### Step 1: Classify Issue Type
@@ -75,8 +85,51 @@ Run the question flow for the classified type. See [references/WORKFLOWS.md](ref
 - Batch related questions together to minimize round-trips
 - If user says "you decide" or similar, make a reasonable choice and note it as `[AGENT-DECIDED: rationale]`
 - Mark gaps as `[NEEDS CLARIFICATION: question]` — don't guess on ambiguous requirements
+- **Never accept vague requirements.** Before moving to the next step, critically examine every
+  requirement for specificity. If a user says "add a button", ask: Where? What states? What action?
+  If a user says "fix the bug", ask: What exact behavior? What's expected vs actual? What triggers it?
+  Treat every underspecified detail as a blocker.
 
-### Step 3: Codebase Exploration
+### Step 3: Requirements Challenge
+
+After discovery, systematically check for underspecified requirements. See the
+**Requirements Challenge Checklist** in [references/WORKFLOWS.md](references/WORKFLOWS.md)
+for the full dimension list.
+
+**Default mode (critical):**
+1. Analyze gathered requirements against the challenge checklist dimensions
+2. Identify every gap — placement, states, behavior, edge cases, error handling, accessibility
+3. Use `AskUserQuestion` to probe each gap (batch related questions, max 4 per call)
+4. Do NOT proceed to codebase exploration until all critical ambiguities are resolved
+5. An agent executing the resulting issue should never need to guess intent
+
+**Quick mode (`-quick`):**
+1. Analyze gathered requirements against the same checklist dimensions
+2. For each gap, propose a smart default with rationale
+3. Present all assumptions in a single summary: "Here's what I'll assume: [list]. Confirm or correct?"
+4. Proceed after one confirmation round — only block on truly ambiguous requirements where no
+   reasonable default exists
+5. Tag every assumed detail in the final issue body with `[PM-PROPOSED: rationale]`
+
+**Example — "add a delete button to user profiles":**
+
+*Critical mode:*
+> I need to clarify several details before drafting:
+> - Where on the profile page should the button go? (header actions, settings section, footer)
+> - Who can see it? (all users, admins only, own profile only)
+> - What happens on click? (immediate delete, confirmation dialog, soft delete)
+> - What are the visual states? (default, hover, disabled, loading)
+> - What about error handling? (network failure, permission denied)
+
+*Quick mode (`-quick`):*
+> Here's what I'll assume — confirm or correct:
+> - Placement: profile header action bar, right-aligned
+> - Visibility: own profile only, admins on any profile
+> - On click: confirmation dialog → soft delete → redirect to home
+> - States: default (red outline), hover (red fill), loading (spinner), disabled (greyed, no permission)
+> - Errors: toast notification with retry option
+
+### Step 4: Codebase Exploration
 
 Before drafting, explore the codebase to enrich the issue with concrete details:
 
@@ -88,7 +141,7 @@ Before drafting, explore the codebase to enrich the issue with concrete details:
 This step is critical — agents executing the issue will perform better with accurate file paths
 and pattern-aware implementation hints.
 
-### Step 4: Draft the Issue
+### Step 5: Draft the Issue
 
 Use the appropriate template from [references/TEMPLATES.md](references/TEMPLATES.md).
 
@@ -104,7 +157,7 @@ Use the appropriate template from [references/TEMPLATES.md](references/TEMPLATES
 
 Write the draft to a temp file: `/tmp/issue-body.md`
 
-### Step 5: Review
+### Step 6: Review
 
 Present the draft to the user with a summary:
 - Title
@@ -116,7 +169,7 @@ Ask: "Ready to create this issue, or want to adjust anything?"
 
 For epics: also present the sub-issue breakdown before creating.
 
-### Step 6: Create
+### Step 7: Create
 
 ```bash
 gh issue create --repo OWNER/REPO \
