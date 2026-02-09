@@ -12,6 +12,7 @@
 | plugin-dev | Development | `/plugin-dev`, `/plugin-dev:create` |
 | temporal | Development | `/temporal` |
 | doppler | DevOps | `/doppler` |
+| oasis-dev | Development | `/oasis-dev` |
 
 ## Navigation
 
