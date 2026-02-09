@@ -23,11 +23,12 @@ You are the **Lead** for the development phase. Create an agent team where devel
 
 ### 0. Git Check
 
-1. Run `git branch --show-current`
-2. If on `main` or `master`:
+1. Run `git fetch origin`
+2. Run `git branch --show-current` to get the current branch name
+3. If on `main` or `master`:
    - Suggest a branch name based on the task (e.g. `feat/rate-limiting`)
-   - Run `git checkout -b <branch> origin/main` to create the feature branch automatically
-3. Run `git fetch origin && git pull` to ensure up-to-date
+   - Run `git checkout -b <branch> origin/<current-branch>` to create the feature branch from the matching remote branch
+4. Run `git pull` to ensure up-to-date
 
 ### 1. Parse Plan
 
@@ -46,9 +47,9 @@ TeamCreate: team_name "dev-team"
 ### 4. Create Tasks
 
 TaskCreate for each plan task (preserve `depends_on` via `addBlockedBy`). Also create:
-- "Test all implementations (code)" — blocked by all impl tasks
-- "Test all implementations (QA)" — blocked by all impl tasks
-- "Review all implementations" — blocked by all test tasks
+- "Test all (code)" — blocked by all impl tasks
+- "Test all (QA)" — blocked by all impl tasks
+- "Review all" — blocked by all test tasks
 
 ### 5. Spawn Teammates
 

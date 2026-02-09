@@ -25,11 +25,12 @@ Phase 1: plan-team               Phase 2: dev-team
 
 ## Step 0: Git Check
 
-1. Run `git branch --show-current`
-2. If on `main` or `master`:
+1. Run `git fetch origin`
+2. Run `git branch --show-current` to get the current branch name
+3. If on `main` or `master`:
    - Suggest a branch name based on the task (e.g. `feat/rate-limiting`)
-   - Run `git checkout -b <branch> origin/main` to create the feature branch automatically
-3. Run `git fetch origin && git pull` to ensure up-to-date
+   - Run `git checkout -b <branch> origin/<current-branch>` to create the feature branch from the matching remote branch
+4. Run `git pull` to ensure up-to-date
 
 ## Phase 1: Planning
 
