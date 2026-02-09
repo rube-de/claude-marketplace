@@ -33,23 +33,14 @@ Phase 1: plan-team               Phase 2: dev-team
 
 ## Phase 1: Planning
 
-Generate a timestamp `$TIMESTAMP` in `YYYYMMDD-HHMM` format at the start.
-
-Execute `/cdt:plan-task` workflow:
-1. Explore codebase
-2. TeamCreate "plan-team"
-3. Spawn architect teammate + PM teammate, researcher as subagent
-4. Coordinate: relay research, facilitate architect teammate↔PM teammate debate
-5. Synthesize into plan
-6. Save `.claude/plans/plan-$TIMESTAMP.md`
-7. Shutdown teammates, TeamDelete
+Follow the planning workflow defined in @plan-task.md (skip Step 0 — Git Check was already done above). plan-task.md generates its own `$TIMESTAMP` for the plan path.
 
 ## Gate: User Approval
 
 Present the plan and ask:
 ```
 AskUserQuestion:
-  "Plan ready at .claude/plans/plan-$TIMESTAMP.md. [N] tasks, [M] waves. Key decisions: [summary]. Risks: [summary]."
+  "Plan ready at [plan path from Phase 1]. [N] tasks, [M] waves. Key decisions: [summary]. Risks: [summary]."
   Options: Approve (Recommended) | Revise | Cancel
 ```
 
@@ -57,23 +48,14 @@ Do NOT proceed without approval. If revisions: update plan, re-present.
 
 ## Phase 2: Development
 
-Execute `/cdt:dev-task` workflow using the plan path from Phase 1:
-1. TeamCreate "dev-team"
-2. Parse plan, create tasks with dependencies
-3. Spawn developer teammate + code-tester teammate + qa-tester teammate + reviewer teammate
-4. Execute waves, assign to developer teammate
-5. After impl: activate code-tester teammate + qa-tester teammate. Both run in parallel.
-6. After tests: activate reviewer teammate (Developer teammate↔Reviewer teammate iterate via messaging)
-7. Final verification: build, tests, stub scan
-8. Shutdown teammates, TeamDelete
-9. Report to `.claude/files/dev-report-$TIMESTAMP.md` (use same or new timestamp)
+Follow the development workflow defined in @dev-task.md using the plan path from Phase 1 (skip Step 0 — Git Check was already done above). dev-task.md generates its own timestamp for the dev report.
 
 ## Wrap Up
 
 Ask user:
 ```
 AskUserQuestion:
-  "Development complete. Report written to .claude/files/dev-report-$TIMESTAMP.md. Ready to commit, push, and create a PR?"
+  "Development complete. Report written to [dev report path]. Ready to commit, push, and create a PR?"
   Options: Create PR (Recommended) | Commit & push only | Skip
 ```
 
@@ -85,7 +67,7 @@ If creating PR:
 
 ## Bridge
 
-`.claude/plans/plan-$TIMESTAMP.md` is the handoff:
+The plan file is the handoff (Lead carries the path between phases):
 - Phase 1 writes it (architecture, tasks, research)
 - Phase 2 reads and updates it (status, logs, files)
 - Lead's context spans both phases; teammate context does not
