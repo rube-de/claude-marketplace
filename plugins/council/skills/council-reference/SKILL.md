@@ -13,7 +13,7 @@ Every council agent MUST return this JSON structure:
 
 ```json
 {
-  "consultant": "gemini|codex|qwen|glm|kimi|claude-security|claude-bugs|claude-compliance|claude-history|claude-quality",
+  "consultant": "gemini|codex|qwen|glm|kimi|claude-deep-review|claude-codebase-context",
   "success": true,
   "fallback": false,
   "confidence": 0.0-1.0,

@@ -21,7 +21,7 @@
 
 ```
 /council review              → Auto-detect concerns, broad pass + escalation, both layers
-/council review security     → All 5 external focus on security + all 5 Claude subagents
+/council review security     → All 5 external focus on security + both Claude subagents
 /council review bugs quality → Run bugs round, then quality round, merge results
 /council review --blind      → Claude subagents via CLI (no tool access), equal footing
 ```
@@ -31,16 +31,16 @@
 ```
 Layer 1: External Consultants                    Layer 2: Claude Subagents
 (model diversity, same prompt)                   (concern depth, tool access)
-┌────────┬────────┬────────┬────────┬────────┐   ┌──────────┬──────────┬──────────┐
-│ Gemini │ Codex  │ Qwen   │ GLM    │ Kimi   │   │ Security │ Bugs     │Compliance│
-│  CLI   │  CLI   │  CLI   │  CLI   │  CLI   │   │ (opus)   │ (opus)   │ (haiku)  │
-└────────┴────────┴────────┴────────┴────────┘   ├──────────┼──────────┤
-         ↓ consensus                              │ History  │ Quality  │
-                                                  │ (haiku)  │ (haiku)  │
-         ALL run in parallel                      └──────────┴──────────┘
-                    ↓                                    ↓ depth
-              ┌───────────┐
-              │  Scorer   │ ← merges + scores all findings
+┌────────┬────────┬────────┬────────┬────────┐   ┌──────────────┬──────────────┐
+│ Gemini │ Codex  │ Qwen   │ GLM    │ Kimi   │   │ Deep Review  │  Codebase    │
+│  CLI   │  CLI   │  CLI   │  CLI   │  CLI   │   │ (opus)       │  Context     │
+└────────┴────────┴────────┴────────┴────────┘   │ Security +   │  (sonnet)    │
+         ↓ consensus                              │ Bugs + Perf  │  Quality +   │
+                                                  │              │  Compliance +│
+         ALL run in parallel                      │              │  History +   │
+                    ↓                             │              │  Docs        │
+              ┌───────────┐                       └──────────────┴──────────────┘
+              │  Scorer   │ ← merges + scores all findings   ↓ depth
               │ (sonnet)  │
               └───────────┘
 ```

@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Skills](https://img.shields.io/badge/Skills-2-blue.svg)]()
-[![Agents](https://img.shields.io/badge/Agents-11-green.svg)]()
+[![Agents](https://img.shields.io/badge/Agents-8-green.svg)]()
 [![Hooks](https://img.shields.io/badge/Hooks-1-orange.svg)]()
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Plugin-purple.svg)]()
 [![Install](https://img.shields.io/badge/Install-Plugin%20%7C%20Skill-informational.svg)]()
@@ -10,7 +10,7 @@
 Orchestrate multiple AI consultants (Gemini, Codex, Qwen, GLM-4.7, Kimi K2.5) and specialized Claude subagents for consensus-driven code reviews, plan validation, and architectural decisions.
 
 > [!NOTE]
-> **Dual-Layer Architecture**: External consultants provide model diversity across 5 different AI providers, while internal Claude subagents provide deep, tool-assisted analysis of security, bugs, quality, compliance, and history.
+> **Dual-Layer Architecture**: External consultants provide model diversity across 5 different AI providers, while internal Claude subagents provide deep, tool-assisted analysis — one for security/bugs/performance, one for quality/compliance/history/docs.
 
 ## Features
 
@@ -28,11 +28,8 @@ Orchestrate multiple AI consultants (Gemini, Codex, Qwen, GLM-4.7, Kimi K2.5) an
 **Layer 2 — Claude Subagents** (concern depth, tool access):
 | Subagent | Model | Focus |
 |----------|-------|-------|
-| claude-security | Opus | Auth, injection, secrets, cryptography |
-| claude-bugs | Opus | Logic errors, off-by-one, race conditions |
-| claude-quality | Haiku | Readability, complexity, duplication |
-| claude-compliance | Haiku | CLAUDE.md rules, code comment directives |
-| claude-history | Haiku | Regressions, recurring patterns, git blame |
+| claude-deep-review | Opus | Security, bugs, performance — traces input paths, follows call chains |
+| claude-codebase-context | Sonnet | Quality, compliance, history, documentation — compares against project conventions |
 
 **Layer 3 — Scoring** (noise reduction):
 | Agent | Model | Role |
@@ -100,11 +97,9 @@ Built-in taxonomy auto-rejects:
 │     └── opencode run -m kimi-k2.5-free "review ..."      │
 │                                                          │
 │  3. Layer 2: Claude Subagents (parallel)                 │
-│     ├── claude-security (traces auth flows, inputs)      │
-│     ├── claude-bugs (follows call chains, types)         │
-│     ├── claude-quality (greps codebase patterns)         │
-│     ├── claude-compliance (reads CLAUDE.md rules)        │
-│     └── claude-history (git blame, commit history)       │
+│     ├── claude-deep-review (security, bugs, performance) │
+│     └── claude-codebase-context (quality, compliance,    │
+│         history, documentation)                          │
 │                                                          │
 │  4. Auto-Escalation — if high-severity found             │
 │                                                          │

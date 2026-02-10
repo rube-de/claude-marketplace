@@ -84,11 +84,8 @@ Invoked via Task tool. Each has a **different concern** and **native codebase ac
 
 | Agent | Model | Concern | Unique Capability |
 |-------|-------|---------|-------------------|
-| `claude-security` | opus | Auth, injection, secrets, access control | Traces input paths through imports, verifies sanitization |
-| `claude-bugs` | opus | Logic errors, edge cases, race conditions | Follows call chains, checks type definitions, verifies nullability |
-| `claude-compliance` | haiku | CLAUDE.md rules, code comment directives | Reads CLAUDE.md files directly, compares rules to changes |
-| `claude-history` | haiku | Regressions, recurring patterns, author context | Runs git blame, reads commit history, detects reverted fixes |
-| `claude-quality` | haiku | Readability, complexity, duplication, consistency | Greps codebase for pattern comparison, finds duplicates |
+| `claude-deep-review` | opus | Security, bugs, performance | Traces input paths, follows call chains, profiles hot paths |
+| `claude-codebase-context` | sonnet | Quality, compliance, history, documentation | Reads CLAUDE.md rules, greps codebase patterns, runs git blame |
 
 ### Dual-Layer Architecture (Review Workflows)
 
@@ -106,11 +103,13 @@ Invoked via Task tool. Each has a **different concern** and **native codebase ac
 │   ← Same prompt │ ← Model diversity │ ← Consensus               │
 │                                                                 │
 │  Layer 2: Claude Subagents (PARALLEL)                           │
-│  ┌──────────┬──────────┬──────────┬──────────┬──────────┐       │
-│  │ Security │ Bugs     │Compliance│ History  │ Quality  │       │
-│  │ (opus)   │ (opus)   │ (haiku)  │ (haiku)  │ (haiku)  │       │
-│  │ Read/Grep│ Read/Grep│ Read/Grep│ Bash/Git │ Read/Grep│       │
-│  └──────────┴──────────┴──────────┴──────────┴──────────┘       │
+│  ┌────────────────────────────┬────────────────────────────┐    │
+│  │ Deep Review                │ Codebase Context           │    │
+│  │ (opus)                     │ (sonnet)                   │    │
+│  │ Security + Bugs + Perf     │ Quality + Compliance +     │    │
+│  │ Read/Grep/Glob/Bash        │ History + Docs             │    │
+│  │                            │ Read/Grep/Glob/Bash        │    │
+│  └────────────────────────────┴────────────────────────────┘    │
 │   ← Different concerns │ ← Native tool access │ ← Depth         │
 │                                                                 │
 │  Layer 3: Scoring                                               │
@@ -123,7 +122,7 @@ Invoked via Task tool. Each has a **different concern** and **native codebase ac
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-Both layers launch **simultaneously** — external consultants (5) and Claude subagents (5) run in parallel.
+Both layers launch **simultaneously** — external consultants (5) and Claude subagents (2) run in parallel.
 
 ### Blind Mode (`--blind`)
 
