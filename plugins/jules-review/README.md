@@ -1,7 +1,7 @@
 # jules-review
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Claude Code](https://img.shields.io/badge/Claude%20Code-Plugin-purple.svg)]()
+[![Claude Code](https://img.shields.io/badge/Claude%20Code-Plugin-purple.svg)](https://docs.anthropic.com/en/docs/claude-code)
 
 Review Jules (Google's AI coding agent) pull requests using AI council. Automatically detects Jules PRs, gathers context, invokes the appropriate council workflow (quick or full), and posts structured GitHub PR reviews with inline line comments tagging `@jules`.
 

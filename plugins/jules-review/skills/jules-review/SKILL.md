@@ -152,19 +152,12 @@ After the council returns its findings, post them as a proper GitHub PR review.
 
 ## Step 7: Present Results
 
-After posting the review, summarize to the user:
+Return the council output verbatim to the user. After the council output, append a brief postscript with review metadata:
 
-```markdown
-## Review Posted
-
-- **PR**: #<number> — <title>
-- **Mode**: <quick|full>
-- **Verdict**: <APPROVE|COMMENT|REQUEST_CHANGES>
-- **Findings**: <count> total (<inline count> inline, <body count> in summary)
-- **Review URL**: <link to the posted review>
-
-Council output has been posted as a GitHub PR review with inline comments.
+```
+---
+Review posted to PR #<number> (<review URL>) | Mode: <quick|full> | Verdict: <APPROVE|COMMENT|REQUEST_CHANGES>
 ```
 
-If the review was posted via fallback (`gh pr comment`), note that:
+If the review was posted via fallback (`gh pr comment`), note:
 > "Posted as PR comment (review API unavailable). Inline comments not supported in fallback mode."

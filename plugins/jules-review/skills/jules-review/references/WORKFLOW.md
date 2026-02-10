@@ -37,12 +37,14 @@ Scan all findings and determine the review event:
 | No findings / all clear | `APPROVE` |
 
 ```bash
+# FINDINGS_JSON is the JSON array of findings from the council output
 EVENT="APPROVE"
-for finding in findings; do
+
+for severity in $(echo "$FINDINGS_JSON" | jq -r '.[].severity // empty'); do
   if [ "$severity" = "critical" ]; then
     EVENT="REQUEST_CHANGES"
     break
-  elif [ -n "$severity" ]; then
+  elif [ "$EVENT" = "APPROVE" ]; then
     EVENT="COMMENT"
   fi
 done
@@ -156,6 +158,11 @@ No issues found. This PR looks good.
 ### Primary Method: gh api
 
 ```bash
+# Resolve owner and repo from the current git remote
+OWNER_REPO=$(gh repo view --json nameWithOwner --jq '.nameWithOwner')
+OWNER=$(echo "$OWNER_REPO" | cut -d/ -f1)
+REPO=$(echo "$OWNER_REPO" | cut -d/ -f2)
+
 # Build the payload
 PAYLOAD=$(jq -n \
   --arg event "$EVENT" \
@@ -165,7 +172,7 @@ PAYLOAD=$(jq -n \
 
 # Post the review
 REVIEW_URL=$(echo "$PAYLOAD" | gh api \
-  "repos/{owner}/{repo}/pulls/<PR#>/reviews" \
+  "repos/$OWNER/$REPO/pulls/<PR#>/reviews" \
   --method POST \
   --input - \
   --jq '.html_url')
@@ -173,28 +180,36 @@ REVIEW_URL=$(echo "$PAYLOAD" | gh api \
 echo "Review posted: $REVIEW_URL"
 ```
 
-### Owner/Repo Resolution
-
-```bash
-# Get owner and repo from the current git remote
-OWNER_REPO=$(gh repo view --json nameWithOwner --jq '.nameWithOwner')
-OWNER=$(echo "$OWNER_REPO" | cut -d/ -f1)
-REPO=$(echo "$OWNER_REPO" | cut -d/ -f2)
-```
-
 ### Handling Inline Comment Failures
 
-If the `gh api` call fails because of an invalid inline comment (line not in diff), retry without inline comments:
+If the `gh api` call fails because of invalid inline comments (line not in diff):
+
+1. **First retry**: Remove only the invalid comment(s) from the array and retry with remaining valid comments
+2. **Second retry**: If still failing, post review with empty comments array (all findings in body)
 
 ```bash
-# Retry with empty comments array — all findings go to body
+# First: filter out the invalid comment and retry
+COMMENTS_JSON=$(echo "$COMMENTS_JSON" | jq 'del(.[] | select(.path == "'"$INVALID_PATH"'" and .line == '"$INVALID_LINE"'))')
+
+PAYLOAD=$(jq -n \
+  --arg event "$EVENT" \
+  --arg body "$REVIEW_BODY" \
+  --argjson comments "$COMMENTS_JSON" \
+  '{event: $event, body: $body, comments: $comments}')
+
+echo "$PAYLOAD" | gh api \
+  "repos/$OWNER/$REPO/pulls/<PR#>/reviews" \
+  --method POST \
+  --input -
+
+# If still failing: drop all inline comments, put everything in body
 PAYLOAD=$(jq -n \
   --arg event "$EVENT" \
   --arg body "$REVIEW_BODY_WITH_ALL_FINDINGS" \
   '{event: $event, body: $body, comments: []}')
 
 echo "$PAYLOAD" | gh api \
-  "repos/{owner}/{repo}/pulls/<PR#>/reviews" \
+  "repos/$OWNER/$REPO/pulls/<PR#>/reviews" \
   --method POST \
   --input -
 ```
@@ -216,8 +231,8 @@ In fallback mode:
 
 | Error | Recovery |
 |-------|----------|
-| Invalid inline comment line | Remove that comment, retry without it |
-| All inline comments invalid | Post review with empty comments array |
+| Invalid inline comment line | Remove that comment, retry with remaining |
+| All inline comments invalid | Post review with empty comments array (all findings in body) |
 | Review API 403/401 | Fall back to `gh pr comment` |
 | `gh` CLI not found | Abort with install instructions |
 | No PR found | Abort with clear error |
