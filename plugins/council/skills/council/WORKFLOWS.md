@@ -311,7 +311,7 @@ fi
 
 1. **Launch Both Agents in Parallel**
 
-   Launch simultaneously (120s timeout each):
+   Launch simultaneously:
 
    ```
    Task(gemini-consultant, flags="-m flash"):
@@ -636,4 +636,4 @@ Users want insights, not five reports. Always synthesize.
 
 ### ❌ Endless Rounds If Round 3 doesn't resolve it, more rounds won't help. Escalate to human.
 
-### ❌ Ignoring Rate Limits If hitting rate limits, switch to parallel triage (/council quick) or staggered launch. Don't keep hammering.
+### ❌ Ignoring Rate Limits If hitting rate limits, stop and wait. Don't keep hammering.

@@ -87,9 +87,6 @@ done
 │  Quick validation?  ─────────► Parallel Triage (Flash + Claude)     │
 │        │                              Calls: 2+ (escalates if needed)│
 │        │                                                             │
-│  Rate limits?  ──────────────► Parallel Triage or staggered         │
-│        │                              Calls: 2+ (parallel start)    │
-│        │                                                             │
 │  Need trade-offs? ───────────► Adversarial                          │
 │        │                              Calls: 4 (parallel)           │
 │        │                                                             │
