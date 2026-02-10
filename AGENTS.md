@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Claude Code skills marketplace: **7 plugins** for multi-agent development, AI council reviews, project management, plugin development, and platform-specific tooling.
+Claude Code skills marketplace: **8 plugins** for multi-agent development, AI council reviews, project management, plugin development, and platform-specific tooling.
 
 ## Directory Structure
 
@@ -31,8 +31,10 @@ cc-skills/
 │   │   └── skills/              # temporal + references
 │   ├── doppler/                 ← Doppler secrets management
 │   │   └── skills/              # doppler + references
-│   └── oasis-dev/               ← Oasis Network development
-│       └── skills/              # oasis-dev + references
+│   ├── oasis-dev/               ← Oasis Network development
+│   │   └── skills/              # oasis-dev + references
+│   └── jules-review/            ← Jules PR review via council
+│       └── skills/              # jules-review + references
 ├── scripts/
 │   ├── validate-plugins.mjs     ← Plugin validation
 │   └── marketplace.schema.json  ← JSON Schema for marketplace.json

@@ -13,6 +13,7 @@
 | temporal | Development | `/temporal` |
 | doppler | DevOps | `/doppler` |
 | oasis-dev | Development | `/oasis-dev` |
+| jules-review | Code Review | `/jules-review` |
 
 ## Navigation
 

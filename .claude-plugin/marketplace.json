@@ -143,6 +143,25 @@
         "sdk",
         "cli"
       ]
+    },
+    {
+      "name": "jules-review",
+      "description": "Review Jules AI agent pull requests using council review with smart quick/full mode selection and GitHub PR review posting",
+      "version": "1.6.3",
+      "source": "./plugins/jules-review",
+      "category": "code-review",
+      "author": {
+        "name": "rube-de",
+        "url": "https://github.com/rube-de"
+      },
+      "keywords": [
+        "jules",
+        "pr-review",
+        "council",
+        "google",
+        "ai-agent",
+        "code-review"
+      ]
     }
   ]
 }
