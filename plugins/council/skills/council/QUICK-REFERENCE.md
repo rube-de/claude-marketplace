@@ -5,11 +5,11 @@
 | Command | Action | API Calls |
 |---------|--------|-----------|
 | `/council` | General council invocation | 5 parallel |
-| `/council review` | Code review (broad + auto-escalation) | 4 + scoring + escalation |
-| `/council review security` | Focused security review | 4 + scoring |
-| `/council review architecture` | Focused architecture review | 4 + scoring |
-| `/council review bugs` | Focused bug detection | 4 + scoring |
-| `/council review quality` | Focused quality/CLAUDE.md review | 4 + scoring |
+| `/council review` | Code review (broad + auto-escalation) | 5 + scoring + escalation |
+| `/council review security` | Focused security review | 5 + scoring |
+| `/council review architecture` | Focused architecture review | 5 + scoring |
+| `/council review bugs` | Focused bug detection | 5 + scoring |
+| `/council review quality` | Focused quality/CLAUDE.md review | 5 + scoring |
 | `/council plan` | Plan validation mode | 5 parallel |
 | `/council consensus [topic]` | Multi-round consensus | 4-12 (multi-round) |
 | `/council adversarial` | Adversarial review | 5 parallel |
@@ -21,7 +21,7 @@
 
 ```
 /council review              → Auto-detect concerns, broad pass + escalation, both layers
-/council review security     → All 5 external focus on security + all 5 Claude subagents
+/council review security     → All 5 external focus on security + both Claude subagents
 /council review bugs quality → Run bugs round, then quality round, merge results
 /council review --blind      → Claude subagents via CLI (no tool access), equal footing
 ```
@@ -31,16 +31,16 @@
 ```
 Layer 1: External Consultants                    Layer 2: Claude Subagents
 (model diversity, same prompt)                   (concern depth, tool access)
-┌────────┬────────┬────────┬────────┬────────┐   ┌──────────┬──────────┬──────────┐
-│ Gemini │ Codex  │ Qwen   │ GLM    │ Kimi   │   │ Security │ Bugs     │Compliance│
-│  CLI   │  CLI   │  CLI   │  CLI   │  CLI   │   │ (opus)   │ (opus)   │ (haiku)  │
-└────────┴────────┴────────┴────────┴────────┘   ├──────────┼──────────┤
-         ↓ consensus                              │ History  │ Quality  │
-                                                  │ (haiku)  │ (haiku)  │
-         ALL run in parallel                      └──────────┴──────────┘
-                    ↓                                    ↓ depth
-              ┌───────────┐
-              │  Scorer   │ ← merges + scores all findings
+┌────────┬────────┬────────┬────────┬────────┐   ┌──────────────┬──────────────┐
+│ Gemini │ Codex  │ Qwen   │ GLM    │ Kimi   │   │ Deep Review  │  Codebase    │
+│  CLI   │  CLI   │  CLI   │  CLI   │  CLI   │   │ (opus)       │  Context     │
+└────────┴────────┴────────┴────────┴────────┘   │ Security +   │  (sonnet)    │
+         ↓ consensus                              │ Bugs + Perf  │  Quality +   │
+                                                  │              │  Compliance +│
+         ALL run in parallel                      │              │  History +   │
+                    ↓                             │              │  Docs        │
+              ┌───────────┐                       └──────────────┴──────────────┘
+              │  Scorer   │ ← merges + scores all findings   ↓ depth
               │ (sonnet)  │
               └───────────┘
 ```
@@ -172,7 +172,7 @@ done
 
 ```json
 {
-  "consultant": "gemini|codex|qwen|glm",
+  "consultant": "gemini|codex|qwen|glm|kimi|claude-deep-review|claude-codebase-context",
   "success": true,
   "confidence": 0.85,
   "severity": "high",

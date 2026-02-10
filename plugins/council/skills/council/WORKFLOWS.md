@@ -201,26 +201,24 @@ fi
    | Gemini | 0.85 |
    | Qwen | 0.80 |
    | GLM | 0.75 |
+   | Kimi | 0.80 |
 
    **Layer 2: Claude Subagents (parallel, 120s timeout each)**
 
-   Each runs a DIFFERENT concern with native tool access:
+   Each runs a DIFFERENT concern domain with native tool access:
    ```
-   Task(claude-security, model=opus):    "Review for security issues. Use Read/Grep to trace input paths."
-   Task(claude-bugs, model=opus):        "Review for bugs. Use Read/Grep to follow call chains."
-   Task(claude-compliance, model=haiku): "Check CLAUDE.md compliance. Read CLAUDE.md files directly."
-   Task(claude-history, model=haiku):    "Check git history for regressions. Use Bash for git blame/log."
-   Task(claude-quality, model=haiku):    "Check code quality. Use Grep to compare against codebase patterns."
+   Task(claude-deep-review, model=opus):     "Review for security, bugs, and performance. Trace input paths, follow call chains, profile hot paths."
+   Task(claude-codebase-context, model=sonnet): "Check quality patterns, CLAUDE.md compliance, git history, and documentation. Compare against codebase conventions."
    ```
 
    If `--blind` flag is set, invoke Claude subagents via CLI instead:
    ```bash
-   claude -p "Review for security issues: [diff content]"
-   claude -p "Review for bugs: [diff content]"
-   # etc. — no tool access, same constraints as external consultants
+   claude -p "Review for security, bugs, and performance: [diff content]"
+   claude -p "Review for quality, compliance, history, and documentation: [diff content]"
+   # No tool access, same constraints as external consultants
    ```
 
-   All 10 agents (5 external + 5 Claude) run simultaneously.
+   All 7 agents (5 external + 2 Claude) run simultaneously.
    Each MUST return findings with mandatory `location` field (`file:line`).
 
 8. **Auto-Escalation (Broad Pass Only)**
@@ -279,13 +277,13 @@ fi
 
     ### Reviewers
     - External: Gemini ✓ | Codex ✓ | Qwen ✓ | GLM ✗ (timeout)
-    - Claude: security ✓ | bugs ✓ | compliance ✓ | history ✓ | quality ✓
+    - Claude: deep-review ✓ | codebase-context ✓
     - Scorer: review-scorer ✓
     ### Mode: [concern | broad] | Blind: [no | yes]
     ### Escalation: [None | Escalated to security round]
 
     ### 🚨 Block Merge (Critical, score >= 80)
-    - [finding] at `file:line` (score: 92, flagged by: Gemini, Codex, claude-security)
+    - [finding] at `file:line` (score: 92, flagged by: Gemini, Codex, claude-deep-review)
 
     ### ⚠️ Should Fix (High, score >= 80, 2+ agree)
     - [finding] at `file:line` (score: 85, flagged by: Qwen, GLM, Codex)
