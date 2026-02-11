@@ -4,11 +4,19 @@
 
 # Derive branch-scoped state directory
 BRANCH=$(git branch --show-current 2>/dev/null | tr '/' '-')
-[ -z "$BRANCH" ] && exit 0
-STATE_FILE=".claude/${BRANCH}/.cdt-team-active"
+
+STATE_FILE=""
+if [ -n "$BRANCH" ]; then
+  STATE_FILE=".claude/${BRANCH}/.cdt-team-active"
+else
+  # Detached HEAD fallback: check if ANY branch has an active team sentinel
+  for f in .claude/*/.cdt-team-active; do
+    [ -f "$f" ] && STATE_FILE="$f" && break
+  done
+fi
 
 # No team active -> allow everything
-[ ! -f "$STATE_FILE" ] && exit 0
+[ -z "$STATE_FILE" ] || [ ! -f "$STATE_FILE" ] && exit 0
 
 # Require jq — fail-closed (block) if missing during active team
 if ! command -v jq >/dev/null 2>&1; then
