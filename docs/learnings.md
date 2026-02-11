@@ -167,7 +167,7 @@ All CDT state is branch-scoped under `.claude/<branch-slug>/` (where `<branch-sl
 - `sync-github-issue.sh` runs in background (`&`) on `start` to avoid blocking team creation
 - All GitHub API calls are best-effort (`|| exit 0`) — never block the main workflow
 
-> Source: [PR #42](https://github.com/rube-de/cc-skills/pull/42) — CDT GitHub issue integration via `sync-github-issue.sh` + `track-team-state.sh` bridge
+> Source: [PR #41](https://github.com/rube-de/cc-skills/pull/41) — CDT GitHub issue integration via `sync-github-issue.sh` + `track-team-state.sh` bridge
 
 ### GitHub Projects v2 requires GraphQL
 
