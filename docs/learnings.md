@@ -94,6 +94,20 @@ When a lead agent bypasses delegation and edits source code directly, prompt ins
 
 > Source: [Issue #32](https://github.com/rube-de/cc-skills/issues/32) — Lead agent was directly editing source files, bypassing teammate delegation. Fixed with `enforce-lead-delegation.sh` + `track-team-state.sh` hooks + SKILL.md Lead Identity section.
 
+### Hook scripts must fail-closed, not fail-open
+
+Security-critical hooks should **block when uncertain** (fail-closed) rather than **allow when uncertain** (fail-open). Three failure modes surfaced during review of `enforce-lead-delegation.sh`:
+
+| Failure mode | Fail-open (bad) | Fail-closed (good) |
+|---|---|---|
+| Missing `jq` | `FILE_PATH` empty → edit allowed | `exit 2` with "jq not found" error |
+| Detached HEAD | `BRANCH` empty → hook exits 0 | Check for any sentinel → `exit 2` with "checkout a branch" message |
+| Ambiguous state | Pick arbitrary branch's sentinel | Block and require explicit branch checkout |
+
+**Rule of thumb**: When a hook can't determine context (missing tool, empty variable, ambiguous state), block and explain — don't guess and proceed. Over-blocking is annoying but recoverable; under-blocking is a security bypass.
+
+> Source: [PR #41](https://github.com/rube-de/cc-skills/pull/41) — Copilot and CodeRabbit reviews caught fail-open jq dependency, detached HEAD bypass, and arbitrary branch glob selection across rounds 7-10.
+
 ---
 
 ## Plugin Structure
@@ -198,5 +212,8 @@ The script uses jq regex patterns (`in.progress`, `in.review`) for case-insensit
 | `<->` in Markdown | Rendered as broken HTML tag | Use `↔` Unicode arrow or wrap in backticks |
 | Brace expansion in `--include` | grep ignores the filter silently | Use separate `--include` flags per extension |
 | Blanket `*.config.*` in allowlist | Matches source files like `src/db.config.ts`, bypassing blocklist | Enumerate explicit tool config patterns (`eslint.config.*`, `vite.config.*`, etc.) |
+| Missing tool dependency in hook | Hook silently allows action (fail-open) | `command -v` check → `exit 2` with error when tool is missing |
+| Empty variable → early exit in guard | Security bypass via unexpected state (e.g., detached HEAD) | Block and explain; don't exit 0 when context is ambiguous |
+| Glob fallback picks arbitrary state | Wrong branch's sentinel used for enforcement | Fail-closed: detect ambiguity, block, require explicit action |
 
-> Sources for pitfalls table: [AGENTS.md](../AGENTS.md) (conventions section), [Plugin Authoring guide](PLUGIN-AUTHORING.md), [Claude Code Skills docs](https://code.claude.com/docs/en/skills), [PR #40](https://github.com/rube-de/cc-skills/pull/40)
+> Sources for pitfalls table: [AGENTS.md](../AGENTS.md) (conventions section), [Plugin Authoring guide](PLUGIN-AUTHORING.md), [Claude Code Skills docs](https://code.claude.com/docs/en/skills), [PR #40](https://github.com/rube-de/cc-skills/pull/40), [PR #41](https://github.com/rube-de/cc-skills/pull/41)
