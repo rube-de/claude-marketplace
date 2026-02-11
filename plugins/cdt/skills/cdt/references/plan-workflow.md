@@ -17,7 +17,7 @@ Detailed execution steps for the planning phase. The Lead reads this before runn
 If `$ARGUMENTS` contains a GitHub issue reference (`#N`, `#N description`, or `https://github.com/OWNER/REPO/issues/N`):
 
 1. Extract the issue number (digits only) and store it in `$ISSUE_NUM`
-2. Write: `mkdir -p .claude/$BRANCH && echo "$ISSUE_NUM" > .claude/$BRANCH/.cdt-issue`
+2. Write: `mkdir -p ".claude/$BRANCH" && echo "$ISSUE_NUM" > ".claude/$BRANCH/.cdt-issue"`
 3. Fetch issue context: `gh issue view "$ISSUE_NUM" --json title,body,labels,assignees`
 4. Use the issue title and body as additional context for planning
 
