@@ -30,7 +30,11 @@ if ! command -v jq >/dev/null 2>&1; then
 fi
 
 # Parse file_path from tool input (pipe stdin directly to avoid echo fragility on large Write payloads)
-FILE_PATH=$(cat | jq -r '.tool_input.file_path // ""' 2>/dev/null)
+# Fail-closed: if jq can't parse the JSON, block rather than allow with empty FILE_PATH
+if ! FILE_PATH=$(cat | jq -r '.tool_input.file_path // ""' 2>/dev/null); then
+  echo "BLOCKED: Unable to parse tool input JSON during active team session." >&2
+  exit 2
+fi
 
 # No file path -> allow (shouldn't happen for Edit/Write)
 if [ -z "$FILE_PATH" ] || [ "$FILE_PATH" = "null" ]; then
@@ -57,7 +61,7 @@ esac
 
 # --- Extension blocklist (source/test files) ---
 case "$FILE_PATH" in
-  *.ts|*.js|*.py|*.go|*.rs|*.tsx|*.jsx)    ;;
+  *.ts|*.js|*.mjs|*.cjs|*.py|*.go|*.rs|*.tsx|*.jsx)    ;;
   *.vue|*.svelte|*.css|*.scss|*.html)      ;;
   *)  exit 0 ;;  # Unknown extension -> allow
 esac
