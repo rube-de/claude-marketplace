@@ -12,7 +12,7 @@ Detailed execution steps for the development phase. The Lead reads this before r
 
 ## 0a. Issue Detection
 
-**Branch-scoped state**: CDT state lives in `.claude/<branch-slug>/` where `<branch-slug>` is the current branch with `/` replaced by `-`. Derive with: `BRANCH=$(git branch --show-current | tr '/' '-')`
+**Branch-scoped state**: CDT state lives in `.claude/<branch-slug>/` where `<branch-slug>` is the current branch with `/` replaced by `-`. Derive with: `BRANCH=$(git branch --show-current | tr '/' '-')`; if empty (detached HEAD), checkout a branch before proceeding.
 
 1. First, check `$ARGUMENTS` and the plan file for GitHub issue references (`#N`, URL).
 2. If found, extract the number into `$ISSUE_NUM` and write/overwrite: `mkdir -p ".claude/$BRANCH" && echo "$ISSUE_NUM" > ".claude/$BRANCH/.cdt-issue"`
