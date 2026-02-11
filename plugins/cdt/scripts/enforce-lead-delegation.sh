@@ -47,12 +47,12 @@ case "$FILE_PATH" in
   */README.md|README.md)                   exit 0 ;;
   */package.json|package.json)             exit 0 ;;
   */tsconfig*.json|tsconfig*.json)         exit 0 ;;
-  eslint.config.*|./eslint.config.*|vite.config.*|./vite.config.*) exit 0 ;;
-  jest.config.*|./jest.config.*|vitest.config.*|./vitest.config.*) exit 0 ;;
-  next.config.*|./next.config.*|postcss.config.*|./postcss.config.*) exit 0 ;;
-  tailwind.config.*|./tailwind.config.*) exit 0 ;;
-  webpack.config.*|./webpack.config.*|rollup.config.*|./rollup.config.*) exit 0 ;;
-  babel.config.*|./babel.config.*) exit 0 ;;
+  */eslint.config.*|eslint.config.*|./eslint.config.*|*/vite.config.*|vite.config.*|./vite.config.*) exit 0 ;;
+  */jest.config.*|jest.config.*|./jest.config.*|*/vitest.config.*|vitest.config.*|./vitest.config.*) exit 0 ;;
+  */next.config.*|next.config.*|./next.config.*|*/postcss.config.*|postcss.config.*|./postcss.config.*) exit 0 ;;
+  */tailwind.config.*|tailwind.config.*|./tailwind.config.*) exit 0 ;;
+  */webpack.config.*|webpack.config.*|./webpack.config.*|*/rollup.config.*|rollup.config.*|./rollup.config.*) exit 0 ;;
+  */babel.config.*|babel.config.*|./babel.config.*) exit 0 ;;
 esac
 
 # --- Extension blocklist (source/test files) ---
