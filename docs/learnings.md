@@ -217,3 +217,37 @@ The script uses jq regex patterns (`in.progress`, `in.review`) for case-insensit
 | Glob fallback picks arbitrary state | Wrong branch's sentinel used for enforcement | Fail-closed: detect ambiguity, block, require explicit action |
 
 > Sources for pitfalls table: [AGENTS.md](../AGENTS.md) (conventions section), [Plugin Authoring guide](PLUGIN-AUTHORING.md), [Claude Code Skills docs](https://code.claude.com/docs/en/skills), [PR #40](https://github.com/rube-de/cc-skills/pull/40), [PR #41](https://github.com/rube-de/cc-skills/pull/41)
+
+---
+
+## Multi-Skill Router Patterns
+
+### Router vs sub-skill model invocation depends on usage pattern
+
+When converting a single-skill plugin to a multi-skill router, `disable-model-invocation` should be set based on **how users express intent**, not on a blanket rule:
+
+**Keep model invocation enabled** when users naturally express the intent in conversation:
+- "Create an issue for this bug" → `/pm` (create)
+- "What should I work on next?" → `/pm:next`
+- "Clean up the old issues" → `/pm:update`
+
+**Disable model invocation** when the skill is purely tool-like and only invoked explicitly:
+- `/dlc:security` — nobody says "run a security scan" to a PM
+- `/dlc:perf` — explicitly commanded, not conversationally triggered
+
+The `description` field's trigger phrases drive model invocation matching. If the phrases match natural language patterns, keep it enabled. If they only match explicit commands, disable it.
+
+**Bad** — blanket rule from DLC applied to PM:
+```yaml
+disable-model-invocation: true  # Copied from DLC without considering usage
+```
+
+**Good** — PM sub-skills keep invocation enabled with natural trigger phrases:
+```yaml
+description: >-
+  Triage open GitHub issues and recommend what to work on next. ...
+  Triggers: what should I work on next, triage backlog, next issue...
+user-invocable: true  # Users naturally say these things
+```
+
+> Source: [Issue #42](https://github.com/rube-de/cc-skills/issues/42) — PM router conversion. DLC uses `disable-model-invocation: true` for all sub-skills; PM intentionally diverges because its sub-skills map to natural language.
