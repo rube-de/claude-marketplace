@@ -5,8 +5,7 @@ description: >-
   agent teams, triage and recommend what to work on next, or audit and clean up
   stale issues. Triggers: create issue, plan work, new task, project manager,
   write ticket, draft issue, plan feature, plan project, start project, create
-  ticket, pm, what should I work on, triage backlog, clean up issues, update
-  stale issues.
+  ticket, pm.
 user-invocable: true
 argument-hint: "[next | update | -quick <description>]"
 allowed-tools:

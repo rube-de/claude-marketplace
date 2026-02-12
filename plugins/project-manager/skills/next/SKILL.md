@@ -62,10 +62,10 @@ Parse each issue body for dependency markers:
 
 | Pattern | Meaning |
 |---------|---------|
-| `Blocked by: #N` | This issue cannot start until #N is resolved |
-| `Blocked by: #N, #M` | Blocked by multiple issues |
-| `Blocks: #N` | Issue #N is waiting on this one |
-| `Depends on: #N` | Same as "Blocked by" |
+| `Blocked by: #<number>` | This issue cannot start until the referenced issue is resolved |
+| `Blocked by: #<number>, #<number>` | Blocked by multiple issues |
+| `Blocks: #<number>` | The referenced issue is waiting on this one |
+| `Depends on: #<number>` | Same as "Blocked by" |
 
 Build two maps:
 - `blockedBy[issue] → Set<issue>` — what blocks this issue
@@ -94,15 +94,17 @@ An issue is **eligible** if:
 - It is not assigned to anyone (unless the user requests "include assigned")
 - It is not in a cycle
 
-**Scoring formula** (higher = work on first):
+**Scoring formula** — `Total = Σ (Weight × Score)` for each factor:
 
-| Factor | Weight | Scoring |
-|--------|--------|---------|
-| Blocks others | 3x | +3 per issue this unblocks |
-| Priority label | 2x | P0=8, P1=6, P2=4, P3=2, none=3 |
-| Type label | 1x | bug=5, security=5, enhancement=3, chore=2, research=1 |
-| Age | 1x | +1 per 7 days since creation (max +8) |
-| Milestone | 1x | +4 if in current/next milestone, +2 if in any milestone, 0 if none |
+| Factor | Weight | Score | Notes |
+|--------|--------|-------|-------|
+| Blocks others | 3 | +3 per issue this unblocks | e.g., unblocks 2 → 3 × 6 = 18 |
+| Priority label | 2 | P0=8, P1=6, P2=4, P3=2, none=3 | `none > P3`: unlabeled may be anything; explicitly-low is known-low |
+| Type label | 1 | bug=5, security=5, enhancement=3, chore=2, research=1, none=2 | Default `none=2` — treat unlabeled same as chore |
+| Age | 1 | +1 per 7 days since creation (max +8) | Caps at 56 days to avoid age dominating |
+| Milestone | 1 | +4 / +2 / 0 (see below) | Heuristic below for "current/next" detection |
+
+**Milestone heuristic:** Compare milestone `due_on` dates. The milestone with the earliest future (or most recently past) due date is "current"; the next one is "next" — these score +4. All other milestones score +2. Milestones without `due_on` default to +2. No milestone = 0.
 
 Sort by total score descending. Break ties by issue number (lower = older = first).
 

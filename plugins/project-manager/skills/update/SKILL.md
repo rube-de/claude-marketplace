@@ -57,6 +57,8 @@ gh issue list --state open --limit 100 --json number,title,body,labels,assignees
 
 **Edge case — no open issues:** Report "No open issues to audit" and stop.
 
+**Edge case — 100+ issues:** Warn the user that results are capped at 100. Suggest filtering by label or milestone for larger backlogs.
+
 ### Step 4: Pass 1 — Metadata Audit
 
 Check each issue for these problems:
@@ -65,13 +67,15 @@ Check each issue for these problems:
 |-------|-----------|----------|
 | **Stale** | No updates in 30+ days | Medium |
 | **Ancient** | No updates in 90+ days | High |
-| **Orphaned blocker** | References `Blocked by: #N` where #N is closed (verify via `gh issue view N --json state -q .state`) | Medium |
+| **Orphaned blocker** | References `Blocked by: #<number>` where the referenced issue is closed (see batch verification note below) | Medium |
 | **Completed sub-tasks** | All `- [x]` checkboxes checked but issue still open | High |
 | **Missing labels** | No type label (bug, enhancement, etc.) | Low |
 | **Missing priority** | No priority label (P0-P3) | Low |
 | **Abandoned assignment** | Assigned but no updates in 14+ days | Medium |
 
 For each issue, collect all matching problems into a findings list.
+
+**Batch verification for orphaned blockers:** Step 3 already fetches all open issues. Any blocker reference (`Blocked by: #<number>`) where the number is absent from the open set is treated as resolved — no extra API call needed. Only use `gh issue view` for edge cases where you need to distinguish "closed" from "never existed".
 
 ### Step 5: Pass 2 — Codebase-Aware Audit
 
@@ -82,8 +86,9 @@ For issues that reference specific files or features, cross-check against the co
 For issues whose body contains file paths (e.g., `src/auth/login.ts`):
 
 1. Extract file paths from issue body
-2. Use `Glob` to check if those files still exist
-3. If files are missing/moved, flag as **file-drift**
+2. Determine intent from surrounding context — paths under headings like "Files to Create" or prefixed with "create", "add", "new" are **expected to not yet exist**; skip these
+3. Use `Glob` to check if remaining paths still exist
+4. If files are missing/moved, flag as **file-drift**
 
 #### Already Implemented
 
@@ -96,7 +101,7 @@ For feature requests and bug fixes:
 #### Related Branches and PRs
 
 ```bash
-gh pr list --state all --search "issue-number" --limit 5 --json number,title,state,mergedAt
+gh pr list --state all --search "ISSUE_NUMBER" --limit 5 --json number,title,state,mergedAt
 ```
 
 Check if:
@@ -218,7 +223,7 @@ gh issue edit ISSUE_NUMBER --remove-assignee "username"
 
 **Removing stale blocker references:**
 ```bash
-gh issue comment ISSUE_NUMBER --body "Removed stale blocker reference to #M (now closed). Issue is unblocked."
+gh issue comment ISSUE_NUMBER --body "Removed stale blocker reference to CLOSED_ISSUE_NUMBER (now closed). Issue is unblocked."
 ```
 
 **Pinging stale assignees:**
