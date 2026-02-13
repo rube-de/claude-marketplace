@@ -1,3 +1,11 @@
+## [1.12.1](https://github.com/rube-de/cc-skills/compare/v1.12.0...v1.12.1) (2026-02-13)
+
+
+### Bug Fixes
+
+* address PR review comments ([b578463](https://github.com/rube-de/cc-skills/commit/b5784631ecb01657682042c05d34adb4f11bbac0))
+* **dlc:** add git push after commit in pr-check skill ([594459d](https://github.com/rube-de/cc-skills/commit/594459da748af7e277767420e4f3ab75a655e23c)), closes [#50](https://github.com/rube-de/cc-skills/issues/50)
+
 # [1.12.0](https://github.com/rube-de/cc-skills/compare/v1.11.0...v1.12.0) (2026-02-13)
 
 
