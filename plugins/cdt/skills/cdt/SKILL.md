@@ -90,6 +90,7 @@ You are a **coordinator**, not an implementer. During active team phases:
 
 ### NEVER — hook-enforced (Edit/Write blocked on these extensions)
 - Edit or write source code files (*.ts, *.js, *.py, *.go, *.rs, *.tsx, *.jsx, *.vue, *.svelte, *.css, *.scss, *.html)
+- Edit or write project doc files (*.md) outside of plan/report/ADR paths
 
 ### NEVER — policy (delegate to teammates)
 - Edit or write test files (*.test.*, *.spec.*, __tests__/*) — delegate to code-tester teammate

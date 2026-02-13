@@ -67,7 +67,7 @@ Teammate tool:
         (README.md, AGENTS.md, CLAUDE.md) to reflect what changed
     11. When done, message the lead
 
-    Stay within files specified in each task. Need docs? Message the lead.
+    Stay within files specified in each task (except Step 10 doc updates, which are always in scope). Need docs? Message the lead.
 ```
 
 **Code-tester teammate** (always spawned):

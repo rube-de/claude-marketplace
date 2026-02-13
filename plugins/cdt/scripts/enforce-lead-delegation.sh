@@ -60,12 +60,13 @@ esac
 case "$FILE_PATH" in
   *.ts|*.js|*.mjs|*.cjs|*.py|*.go|*.rs|*.tsx|*.jsx)    ;;
   *.vue|*.svelte|*.css|*.scss|*.html)      ;;
+  *.md)                                    ;;
   *)  exit 0 ;;  # Unknown extension -> allow
 esac
 
-# Blocked -- source file edit during active team
+# Blocked -- source/doc file edit during active team
 TEAM_NAME=$(cat "$STATE_FILE" 2>/dev/null || echo "active team")
-echo "BLOCKED: Lead cannot edit source files during active ${TEAM_NAME}." >&2
+echo "BLOCKED: Lead cannot edit source or project doc files during active ${TEAM_NAME}." >&2
 echo "Delegate to the developer or architect teammate via SendMessage." >&2
 echo "File: ${FILE_PATH}" >&2
 exit 2

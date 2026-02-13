@@ -113,7 +113,7 @@ Task tool:
 1. **When Researcher returns** — SendMessage findings to architect teammate
 2. **When architect teammate needs docs** — spawn another Researcher subagent, relay results
 3. **When architect teammate shares design** — verify it aligns with research findings, confirm the plan file path was communicated
-4. **When PM teammate validates** — if NEEDS_REVISION, architect updates the plan directly (max 2 cycles)
+4. **When PM teammate validates** — if NEEDS_REVISION, architect revises their design directly (max 2 cycles)
 5. **If they disagree** — you decide based on requirements + research
 
 ## 7. Verify Plan
