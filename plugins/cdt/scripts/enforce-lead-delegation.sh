@@ -46,9 +46,6 @@ case "$FILE_PATH" in
   */.claude/plans/*|.claude/plans/*)       exit 0 ;;
   */.claude/files/*|.claude/files/*)       exit 0 ;;
   */docs/adrs/*|docs/adrs/*)               exit 0 ;;
-  */CLAUDE.md|CLAUDE.md)                   exit 0 ;;
-  */AGENTS.md|AGENTS.md)                   exit 0 ;;
-  */README.md|README.md)                   exit 0 ;;
   */package.json|package.json)             exit 0 ;;
   */tsconfig*.json|tsconfig*.json)         exit 0 ;;
   */eslint.config.*|eslint.config.*|./eslint.config.*|*/vite.config.*|vite.config.*|./vite.config.*) exit 0 ;;
