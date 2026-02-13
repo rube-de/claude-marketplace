@@ -1,3 +1,17 @@
+# [1.11.0](https://github.com/rube-de/cc-skills/compare/v1.10.1...v1.11.0) (2026-02-13)
+
+
+### Bug Fixes
+
+* add language identifiers to all bare fenced code blocks in DLC skills ([6513f54](https://github.com/rube-de/cc-skills/commit/6513f54e4aeba7ce7ef623eded44515d95fb199b))
+* **dlc:** address council review findings for pr-validity ([a60e3bf](https://github.com/rube-de/cc-skills/commit/a60e3bfaf6b7e47e8c7277327cc1edbf3f8ce64e))
+* **dlc:** address PR review comments on pr-validity skill ([67f6c84](https://github.com/rube-de/cc-skills/commit/67f6c848e5a4284b7b8244fb11f4b1a339410be5))
+
+
+### Features
+
+* **dlc:** add pr-validity sub-skill for duplicate code detection ([e1bbb4c](https://github.com/rube-de/cc-skills/commit/e1bbb4ce3135230af968fbec266ac72645e944c9)), closes [#47](https://github.com/rube-de/cc-skills/issues/47)
+
 ## [1.10.1](https://github.com/rube-de/cc-skills/compare/v1.10.0...v1.10.1) (2026-02-13)
 
 
