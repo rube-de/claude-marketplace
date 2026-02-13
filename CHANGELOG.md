@@ -1,3 +1,10 @@
+# [1.12.0](https://github.com/rube-de/cc-skills/compare/v1.11.0...v1.12.0) (2026-02-13)
+
+
+### Features
+
+* **pm:** add review sub-skill for single-issue deep validation ([f3c9fda](https://github.com/rube-de/cc-skills/commit/f3c9fdae9fc807672fcbe23b4e5f1f124a809d7c))
+
 # [1.11.0](https://github.com/rube-de/cc-skills/compare/v1.10.1...v1.11.0) (2026-02-13)
 
 
