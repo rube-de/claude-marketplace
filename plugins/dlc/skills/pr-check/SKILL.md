@@ -212,7 +212,7 @@ If push fails, report the error clearly and print a manual recovery command:
 Push failed: {error message}
 Your commit is preserved locally. The most common cause is new commits on the remote branch.
 To resolve, pull and retry:
-  git pull --rebase origin {branch} && git push origin HEAD
+  git pull --rebase && git push origin HEAD
 ```
 
 Do NOT use `--force` or `--force-with-lease`. Only standard push is allowed.
@@ -224,7 +224,8 @@ PR review compliance check complete.
   - PR: #{number} ({title})
   - Total comments: {n}
   - Resolved: {n}, Fixed by DLC: {n}, Skipped (user decision): {n}, Discussion: {n}, Blocked: {n}, Dismissed: {n}
-  - Push: {Pushed to origin/{branch} | Push failed: {reason}}
+  - Push: {Pushed {sha} to origin/{branch}}  [if push succeeded]
+  - Push: Push failed: {reason}  [if push failed]
   - Follow-up issue: #{number} ({url})  [only if user approved creation]
 ```
 
