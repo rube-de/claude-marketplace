@@ -128,7 +128,7 @@ If issue creation fails, save draft to `/tmp/dlc-draft-${TIMESTAMP}.md` and prin
 
 ## Step 5: Report
 
-```
+```text
 Performance analysis complete.
   - Checks run: {list of applicable checks}
   - Tools used: {list}

@@ -124,7 +124,7 @@ If issue creation fails, save draft to `/tmp/dlc-draft-${TIMESTAMP}.md` and prin
 
 Print a summary to the user:
 
-```
+```text
 Security scan complete.
   - Project type: {type}
   - Tools used: {list}

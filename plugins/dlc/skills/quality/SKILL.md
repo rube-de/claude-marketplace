@@ -141,7 +141,7 @@ If issue creation fails, save draft to `/tmp/dlc-draft-${TIMESTAMP}.md` and prin
 
 ## Step 5: Report
 
-```
+```text
 Quality check complete.
   - Linter: {detected linter}
   - Tools used: {list}
