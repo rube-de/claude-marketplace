@@ -192,13 +192,30 @@ If issue creation fails, save draft to `/tmp/dlc-draft-${TIMESTAMP}.md` and prin
 
 **If the user declines**, skip issue creation and proceed to Step 7.
 
-## Step 7: Commit and Report
+## Step 7: Commit, Push, and Report
 
 If fixes were made:
 
 ```bash
 git commit -m "fix: address PR review comments"
 ```
+
+Push the commit to the remote branch:
+
+```bash
+git push origin HEAD
+```
+
+If push fails, report the error clearly and print a manual recovery command:
+
+```text
+Push failed: {error message}
+Your commit is preserved locally. The most common cause is new commits on the remote branch.
+To resolve, pull and retry:
+  git pull --rebase origin {branch} && git push origin HEAD
+```
+
+Do NOT use `--force` or `--force-with-lease`. Only standard push is allowed.
 
 Print summary:
 
@@ -207,6 +224,7 @@ PR review compliance check complete.
   - PR: #{number} ({title})
   - Total comments: {n}
   - Resolved: {n}, Fixed by DLC: {n}, Skipped (user decision): {n}, Discussion: {n}, Blocked: {n}, Dismissed: {n}
+  - Push: {Pushed to origin/{branch} | Push failed: {reason}}
   - Follow-up issue: #{number} ({url})  [only if user approved creation]
 ```
 
