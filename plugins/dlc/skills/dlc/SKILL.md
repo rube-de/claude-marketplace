@@ -26,7 +26,7 @@ Automated quality gates for the development life cycle. Each sub-skill detects y
 
 ## Usage
 
-```
+```text
 /dlc                  → Show this overview
 /dlc security         → Run security scan
 /dlc:security         → Run security scan (alternate syntax)
@@ -63,7 +63,7 @@ When invoked with `--all`, invoke each sub-skill via `Skill` in order:
 
 After all checks complete, print a summary table:
 
-```
+```markdown
 ## DLC Summary
 
 | Check | Findings | Issue |

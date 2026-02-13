@@ -122,12 +122,12 @@ gh api repos/{owner}/{repo}/pulls/{number}/comments \
 ```
 
 For **Discussion** items, post:
-```
+```text
 Flagged for human review — see PR check summary below.
 ```
 
 For **Blocked** items, post:
-```
+```text
 Flagged for human review — see PR check summary below.
 ```
 
@@ -202,7 +202,7 @@ git commit -m "fix: address PR review comments"
 
 Print summary:
 
-```
+```text
 PR review compliance check complete.
   - PR: #{number} ({title})
   - Total comments: {n}

@@ -138,7 +138,7 @@ If issue creation fails, save draft to `/tmp/dlc-draft-${TIMESTAMP}.md` and prin
 
 ## Step 6: Report
 
-```
+```text
 Test analysis complete.
   - Framework: {detected framework}
   - Tests: {passed} passed, {failed} failed, {skipped} skipped

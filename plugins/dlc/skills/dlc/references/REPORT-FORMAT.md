@@ -37,7 +37,7 @@ Each finding is a structured record with these fields:
 
 ## Example Finding
 
-```
+```yaml
 severity: high
 type: vulnerability
 file: src/api/auth.ts

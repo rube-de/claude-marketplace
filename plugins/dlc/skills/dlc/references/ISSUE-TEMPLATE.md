@@ -4,7 +4,7 @@ GitHub issues created by DLC skills follow this exact format.
 
 ## Title Format
 
-```
+```text
 [DLC] {type}: {summary}
 ```
 

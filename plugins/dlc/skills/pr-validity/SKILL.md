@@ -74,7 +74,7 @@ For each extracted construct, search the existing codebase for matches. Exclude 
 
 Use `Grep` to find constructs with the same name:
 
-```
+```text
 Grep: pattern="(function|const|class|def|fn|func|type)\s+{name}\b"
 ```
 
@@ -215,7 +215,7 @@ If issue creation fails, save draft to `/tmp/dlc-draft-${TIMESTAMP}.md` and prin
 
 Print a summary:
 
-```
+```text
 PR validity analysis complete.
   - PR: #{number} ({title})
   - Constructs analyzed: {n}
