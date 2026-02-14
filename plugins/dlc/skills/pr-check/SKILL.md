@@ -109,9 +109,9 @@ Assign a confidence level:
 - If unsure about intent, classify as **Discussion** instead of guessing
 - Never implement a suggestion assessed as technically incorrect without explicit user approval
 
-## Step 5: Reply to Comments
+## Step 5: Reply to Fixed Comments
 
-For each addressed comment, post an inline reply:
+For each **fixed** comment, post an inline reply:
 
 ```bash
 # Reply to a review comment
@@ -121,19 +121,11 @@ gh api repos/{owner}/{repo}/pulls/{number}/comments \
   -f in_reply_to={comment_id}
 ```
 
-For **Discussion** items, post:
-```text
-Flagged for human review — see PR check summary below.
-```
-
-For **Blocked** items, post:
-```text
-Flagged for human review — see PR check summary below.
-```
+> **Note:** Discussion and Blocked replies are deferred to Step 6b (after user decision).
 
 ## Step 6: User-Gated Issue Creation
 
-If no Discussion or Blocked items remain after Step 4, **skip this step entirely**.
+If no Discussion, Blocked, or user-skipped Fixable items remain after Step 4, **skip this step entirely**.
 
 If out-of-scope items remain (Discussion, Blocked, or items the user chose to skip), use `AskUserQuestion` to ask:
 
@@ -160,7 +152,57 @@ If the user selects "Show me details first", display each remaining item with yo
 | Unresolved — Fixable (unfixed due to error) | **Medium** |
 | Dismissed | **Info** |
 
-**Additional section** — add after Findings Detail:
+```bash
+REPO=$(gh repo view --json nameWithOwner -q .nameWithOwner)
+TIMESTAMP=$(date +%s)
+BODY_FILE="/tmp/dlc-issue-${TIMESTAMP}.md"
+# Write the formatted issue body to BODY_FILE following ISSUE-TEMPLATE.md structure
+
+gh issue create \
+  --repo "$REPO" \
+  --title "[DLC] PR Review: {n} unresolved comments on PR #{number}" \
+  --body-file "$BODY_FILE" \
+  --label "dlc-pr-check"
+```
+
+If issue creation fails, save draft to `/tmp/dlc-draft-${TIMESTAMP}.md` and print the path.
+
+**If the user chooses "No, I'll handle manually"**, skip issue creation and proceed to Step 6b.
+
+## Step 6b: Decision-Aware Inline Replies
+
+If there are no Discussion, Blocked, or user-skipped Fixable items, **skip this step**.
+
+After the user's decision in Step 6, post inline replies reflecting the actual outcome. Separate the global decision (for Discussion/Blocked items) from the per-item decision (for skipped Fixable items).
+
+For each **Discussion** or **Blocked** comment, map the user's Step 6 decision:
+
+| User Decision (Step 6) | Inline Reply Text |
+|------------------------|-------------------|
+| Created follow-up issue | `Acknowledged — tracked in #ISSUE_NUMBER` |
+| Handle manually | `Acknowledged — will be addressed by the author` |
+
+For each **user-skipped Fixable** comment, always reply:
+
+| Item Status | Inline Reply Text |
+|-------------|-------------------|
+| Skipped Fixable | `Acknowledged — deferred (out of scope for this PR)` |
+
+```bash
+# Reply to each Discussion/Blocked/skipped comment with the decision-aware message
+gh api repos/{owner}/{repo}/pulls/{number}/comments \
+  --method POST \
+  -f body="{decision-aware reply text}" \
+  -f in_reply_to={comment_id}
+```
+
+## Step 6c: PR Summary Comment
+
+If there are no Discussion, Blocked, or user-skipped Fixable items, **skip this step**.
+
+Post a PR-level summary comment containing the overall status and decisions.
+
+Build the summary with these sections:
 
 ```markdown
 ## PR Comment Status
@@ -174,23 +216,34 @@ If the user selects "Show me details first", display each remaining item with yo
 | Blocked | {n} |
 | Dismissed | {n} |
 | **Total** | **{n}** |
+
+## Decisions
+
+{For each Discussion/Blocked/skipped Fixable item, one line:}
+- `{path}:{line}` — {decision}: {brief description}
+
+## Follow-up
+
+{Include all applicable lines below:}
+{If any follow-up issue was created:}
+Follow-up issue: #ISSUE_NUMBER
+
+{If any items will be handled manually by the author:}
+Author will address some remaining items manually.
+
+{If any items were explicitly deferred/skipped:}
+Some remaining items deferred — out of scope for this PR.
 ```
+
+Write the summary and post it:
 
 ```bash
-REPO=$(gh repo view --json nameWithOwner -q .nameWithOwner)
 TIMESTAMP=$(date +%s)
-BODY_FILE="/tmp/dlc-issue-${TIMESTAMP}.md"
+SUMMARY_FILE="/tmp/dlc-pr-summary-${TIMESTAMP}.md"
+# Write the summary content to SUMMARY_FILE
 
-gh issue create \
-  --repo "$REPO" \
-  --title "[DLC] PR Review: {n} unresolved on PR #{number}" \
-  --body-file "$BODY_FILE" \
-  --label "dlc-pr-check"
+gh pr comment {number} --body-file "$SUMMARY_FILE"
 ```
-
-If issue creation fails, save draft to `/tmp/dlc-draft-${TIMESTAMP}.md` and print the path.
-
-**If the user declines**, skip issue creation and proceed to Step 7.
 
 ## Step 7: Commit, Push, and Report
 
