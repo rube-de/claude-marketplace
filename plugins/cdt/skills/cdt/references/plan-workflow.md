@@ -77,7 +77,62 @@ Teammate tool:
     7. Check if `docs/adrs/` is referenced in the target project's `AGENTS.md` or `CLAUDE.md` — if not, add a reference so future agents discover the ADR directory
     8. Message your design to the lead AND the product-manager (include links to new and referenced ADRs)
     9. Iterate on PM teammate feedback
-    10. Write the plan to [plan-path] following the template in plan-workflow.md Step 7 — **read that section now** for the exact template
+    10. Write the plan to [plan-path] using this template:
+
+        # Plan: [Task Name]
+
+        **Generated**: [Date]  **Target**: [Original request]
+
+        ## Overview
+        [Architecture, key decisions, research findings — 2-3 paragraphs]
+
+        ## Architecture
+
+        ### Component Design
+        [Per component: purpose, interface, dependencies]
+
+        ### File Changes
+        | File | Action | Description |
+        |------|--------|-------------|
+
+        ### Data Flow
+        [How data moves through the system]
+
+        ## Architecture Decision Records
+        [Link to each ADR created or referenced during planning]
+        - [ADR-NNNN: Title](docs/adrs/adr-NNNN-slug.md) — status
+
+        ## Research Findings
+        [Library versions, APIs, code examples, pitfalls]
+
+        ## Tasks
+
+        ### T1: [Name]
+        - **depends_on**: []
+        - **location**: [file paths]
+        - **description**: [specific and actionable]
+        - **validation**: [how to verify]
+        - **status**: Not Started
+        - **log**:
+        - **files_changed**:
+
+        ### T2: [Name]
+        - **depends_on**: [T1]
+        ...
+
+        ## Execution Waves
+        | Wave | Tasks | Starts When |
+        |------|-------|-------------|
+
+        ## Testing Strategy
+        [Framework, scenarios, acceptance criteria]
+        [Include QA test scenarios: integration/smoke tests for non-UI tasks; user flows, interactions, navigation, and Storybook stories for UI tasks.]
+
+        ## Risks & Mitigations
+
+        ## Validation
+        [PM verdict]
+
     11. Message the lead and product-manager that the plan is ready at [plan-path]
     12. Mark task complete
 ```

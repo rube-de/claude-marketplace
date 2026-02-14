@@ -152,7 +152,37 @@ Teammate tool:
     6. Blocking issues → message developer with file:line + fix suggestion
        Wait for fix, re-review (max 3 cycles, then escalate to lead)
     7. When approved, message lead with verdict
-    8. Write the dev report to [report-path] following the template in dev-workflow.md Step 9 — **read that section now** for the exact template
+    8. Write the dev report to [report-path] using this template:
+
+        # Development Report: [Task Name]
+
+        **Plan**: [path]  **Date**: [date]
+
+        ## Summary
+        [What was built]
+
+        ## Execution
+        | Wave | Tasks | Status |
+        |------|-------|--------|
+
+        ## Changes
+        | File | Action | Description |
+        |------|--------|-------------|
+
+        ## Test Results
+        [Pass/fail counts]
+
+        ## Review
+        [Verdict, cycles, issues fixed]
+
+        ## Developer↔Code-Tester Iterations
+        [Cycle count, key fixes]
+
+        ## Developer↔QA-Tester Iterations
+        [Cycle count, issues found, tests written, screenshots taken (if UI)]
+
+        ## Known Limitations
+
     9. Message the lead that the report is ready at [report-path]
     10. Mark task complete
 
