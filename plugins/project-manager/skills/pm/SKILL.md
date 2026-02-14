@@ -234,8 +234,9 @@ gh issue create --repo OWNER/REPO \
 | Research | `spike:` | `research` |
 
 **On failure:** Save draft to `/tmp/issue-draft-{timestamp}.md`, report error.
+**On success:** Remove the temp file: `rm -f /tmp/issue-body.md`
 
-For epics: create the parent issue first, then sub-issues with `Part of #EPIC_NUMBER` references.
+For epics: create the parent issue first, then sub-issues with `Part of #EPIC_NUMBER` references. Clean up `/tmp/issue-body.md` only after **all** sub-issues are created successfully.
 
 Report all created issue URLs to the user.
 
