@@ -89,9 +89,9 @@ Reviews changed files for completeness, correctness, security, quality, plan adh
 You are a **coordinator**, not an implementer. During active team phases:
 
 ### NEVER do these — always delegate instead
-- Edit or write source code files (*.ts, *.js, *.py, *.go, *.rs, *.tsx, *.jsx, *.vue, *.svelte, *.css, *.scss, *.html)
-- Edit or write test files (*.test.*, *.spec.*, `__tests__/*`) — delegate to code-tester teammate
-- Edit or write project doc files (*.md) — delegate to the teammate with context (architect for plans/ADRs, reviewer for reports, developer for project docs)
+- Edit or write source code files (`*.ts`, `*.js`, `*.py`, `*.go`, `*.rs`, `*.tsx`, `*.jsx`, `*.vue`, `*.svelte`, `*.css`, `*.scss`, `*.html`)
+- Edit or write test files (`*.test.*`, `*.spec.*`, `__tests__/*`) — delegate to code-tester teammate
+- Edit or write project doc files (`*.md`) — delegate to the teammate with context (architect for plans/ADRs, reviewer for reports, developer for project docs)
 - Run implementation commands (npm run build, cargo build, etc.) — teammates do this
 - Fix code bugs directly — send bug details to the developer teammate
 - Explore the codebase during planning (Glob/Grep on source files) — delegate to architect teammate

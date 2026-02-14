@@ -42,8 +42,8 @@ fi
 # Block all file edits during active team — lead is a coordinator, not an implementer.
 TEAM_NAME=$(cat "$STATE_FILE" 2>/dev/null || echo "active team")
 FILE_PATH_MSG=""
-if [ -n "$FILE_PATH" ] && [ "$FILE_PATH" != "null" ]; then
+if [ -n "$FILE_PATH" ]; then
   FILE_PATH_MSG=" File: ${FILE_PATH}"
 fi
-echo "BLOCKED: Lead cannot edit files during active ${TEAM_NAME}. Delegate via SendMessage.${FILE_PATH_MSG}" >&2
+echo "BLOCKED: File edit blocked during active ${TEAM_NAME} (hook cannot distinguish lead from teammate). Delegate via SendMessage.${FILE_PATH_MSG}" >&2
 exit 2
