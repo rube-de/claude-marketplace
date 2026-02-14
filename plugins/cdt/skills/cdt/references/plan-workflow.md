@@ -74,10 +74,10 @@ Teammate tool:
        - Number sequentially from existing ADRs (start at 0001 if none exist)
        - When a new decision supersedes an old one, update the old ADR's status to `superseded` and link to the new ADR
        - Reference existing ADRs when relevant (e.g., "per ADR-0003, we use Redis for caching")
-    7. Check if `docs/adrs/` is referenced in the target project's `AGENTS.md` or `CLAUDE.md` — if not, add a reference so future agents discover the ADR directory
+    7. Check if `docs/adrs/` is referenced in the target project's `AGENTS.md` or `CLAUDE.md` — if not, note a documentation-update task in the plan so the developer teammate can add the reference later
     8. Message your design to the lead AND the product-manager (include links to new and referenced ADRs)
     9. Iterate on PM teammate feedback
-    10. Write the plan to [plan-path] using this template:
+    10. Ensure the plan directory exists (`mkdir -p .claude/plans`), then write the plan to [plan-path] using this template:
 
         # Plan: [Task Name]
 
