@@ -70,6 +70,8 @@ For each extracted construct, record:
 
 For each extracted construct, search the existing codebase for matches. Exclude files that are part of the PR diff.
 
+Before targeted searches, use the Explore agent to build broad context of the codebase structure and identify areas likely to contain similar constructs. Use repomix-explorer (if available) for large codebases. Then use Grep and Read for the targeted searches below.
+
 ### 3a. Name-Based Search
 
 Use `Grep` to find constructs with the same name:

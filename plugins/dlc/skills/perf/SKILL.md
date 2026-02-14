@@ -76,7 +76,7 @@ time cargo build --release 2>&1
 
 ### Claude Algorithmic Analysis (Always Run)
 
-Even with tools, perform manual analysis:
+Even with tools, always perform manual analysis. Use the Explore agent to discover performance-sensitive areas across the codebase (hot paths, data pipelines, request handlers). Use repomix-explorer (if available) for large codebases to get a structural overview. Then use targeted Grep and Read for detailed analysis:
 - Search for `O(n^2)` or worse patterns: nested loops over the same collection, repeated array searches
 - Check for missing indexes in database queries (`*.sql`, ORM query files)
 - Look for synchronous blocking in async contexts

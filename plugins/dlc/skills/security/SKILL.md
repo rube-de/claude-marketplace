@@ -74,7 +74,7 @@ grep -rnE "AKIA|sk-|ghp_|password[[:space:]]*=|secret[[:space:]]*=" \
   --include="*.rs" --include="*.java" --include="*.rb" --include="*.env" .
 ```
 
-If **no tools are available**, fall back to Claude static analysis:
+If **no tools are available**, use the Explore agent to discover security-sensitive areas across the codebase. Use repomix-explorer (if available) for large codebases to get a structural overview. Then use targeted Grep and Read for detailed analysis:
 - Review files matching `**/auth/**`, `**/login/**`, `**/api/**`, `**/*.env*`
 - Check for hardcoded credentials, SQL injection, XSS, insecure crypto
 - Check dependency manifests for known-vulnerable version ranges
