@@ -1,3 +1,12 @@
+## [1.12.3](https://github.com/rube-de/cc-skills/compare/v1.12.2...v1.12.3) (2026-02-14)
+
+
+### Bug Fixes
+
+* **dlc:** address PR review comments on pr-check skill ([deaf313](https://github.com/rube-de/cc-skills/commit/deaf31390ce008f406538ed22f0cb3256d58d1ef))
+* **dlc:** prevent premature replies and add PR summary in pr-check ([c86a291](https://github.com/rube-de/cc-skills/commit/c86a291ae4ab0bd28d9cc21782df35c5903e38af)), closes [#55](https://github.com/rube-de/cc-skills/issues/55)
+* **dlc:** use ISSUE_NUMBER placeholder instead of #{N} in pr-check templates ([0a9b410](https://github.com/rube-de/cc-skills/commit/0a9b410329bcbe773ba1a39ef7acfd68e6629c8b))
+
 ## [1.12.2](https://github.com/rube-de/cc-skills/compare/v1.12.1...v1.12.2) (2026-02-14)
 
 
