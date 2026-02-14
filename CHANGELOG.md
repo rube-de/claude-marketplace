@@ -1,3 +1,10 @@
+## [1.12.5](https://github.com/rube-de/cc-skills/compare/v1.12.4...v1.12.5) (2026-02-14)
+
+
+### Bug Fixes
+
+* **pm:** clean up /tmp/issue-body.md after successful issue creation ([f960bb5](https://github.com/rube-de/cc-skills/commit/f960bb52c6c62ed192955c95092b67f04a76bef0)), closes [#56](https://github.com/rube-de/cc-skills/issues/56)
+
 ## [1.12.4](https://github.com/rube-de/cc-skills/compare/v1.12.3...v1.12.4) (2026-02-14)
 
 

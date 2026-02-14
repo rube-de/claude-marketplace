@@ -1,6 +1,6 @@
 {
   "name": "cc-skills",
-  "version": "1.12.4",
+  "version": "1.12.5",
   "private": true,
   "description": "A curated collection of Claude Code plugins: multi-agent dev team, AI council code reviews, and project management",
   "scripts": {
