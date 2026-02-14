@@ -4,7 +4,7 @@ description: >-
   PR validity analysis: fetch PR diff, extract new code additions,
   search existing codebase for duplicate or overlapping implementations,
   classify changes, and create a structured GitHub issue.
-allowed-tools: [Bash, Read, Grep, Glob, AskUserQuestion]
+allowed-tools: [Bash, Read, Grep, Glob, Task, AskUserQuestion]
 ---
 
 # DLC: PR Validity Analysis

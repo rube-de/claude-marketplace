@@ -4,7 +4,7 @@ description: >-
   Performance analysis: bundle size checks, profiling, benchmarks,
   and algorithmic complexity review. Identifies performance-sensitive
   areas and creates a structured GitHub issue.
-allowed-tools: [Bash, Read, Grep, Glob]
+allowed-tools: [Bash, Read, Grep, Glob, Task]
 ---
 
 # DLC: Performance Analysis
