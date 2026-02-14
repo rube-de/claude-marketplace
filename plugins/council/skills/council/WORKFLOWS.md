@@ -71,13 +71,18 @@ fi
 
    Task(council:glm-consultant, timeout=120s):
    [Same structure]
+
+   Task(council:kimi-consultant, timeout=120s):
+   [Same structure]
    ```
 
 4. **Handle Partial Responses**
    - 5/5: Full synthesis
-   - 3/4: Proceed with warning
-   - 2/4: Proceed with strong warning
-   - 1/4: Abort, fall back to single consultant
+   - 4/5: Proceed with note: "[X] consultant unavailable"
+   - 3/5: Proceed with warning: "Limited council - only 3 responses"
+   - 2/5: Proceed with strong warning: "Limited council - only 2 responses"
+   - 1/5: Abort council, fall back to single consultant mode
+   - 0/5: Abort with error: "Council unavailable - all consultants failed"
 
 5. **Apply Weighted Synthesis**
    ```
