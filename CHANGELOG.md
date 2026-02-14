@@ -1,3 +1,13 @@
+## [1.12.2](https://github.com/rube-de/cc-skills/compare/v1.12.1...v1.12.2) (2026-02-14)
+
+
+### Bug Fixes
+
+* **cdt:** address council review findings for delegation refactor ([0004403](https://github.com/rube-de/cc-skills/commit/0004403e0f9d3e878af81968298c08ce9ef905a2))
+* **cdt:** address PR review comments from CodeRabbit and Copilot ([04c4a07](https://github.com/rube-de/cc-skills/commit/04c4a07410cdf21ca9cd21da8997db00ed194055))
+* **cdt:** address second round of PR review comments ([bf25d66](https://github.com/rube-de/cc-skills/commit/bf25d664b6a265fe588ba7d51f5569d3beda9c08))
+* **cdt:** inline plan and report templates into teammate spawn prompts ([1e995fa](https://github.com/rube-de/cc-skills/commit/1e995fa02745e5404410d25a6e6fbc3a7702cc3c))
+
 ## [1.12.1](https://github.com/rube-de/cc-skills/compare/v1.12.0...v1.12.1) (2026-02-13)
 
 
