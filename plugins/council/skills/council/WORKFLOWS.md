@@ -259,20 +259,22 @@ fi
     Before scoring, validate every response and verify both layers produced results.
 
     **Validation** (see SKILL.md "Response Validation" for full algorithm):
-    ```
+    ```text
     FOR each consultant response:
       1. Parse as JSON — if fails: mark success: false
       2. Check required fields (consultant, success, findings, summary)
          — if missing: mark success: false
+      2b. Normalize optional fields (fallback, confidence, severity):
+         — Apply defaults if missing (fallback: false, confidence: 0.5, severity: "info")
       3. Validate each finding (type, severity, description; location for reviews)
          — drop invalid findings, keep valid ones
       4. Log result: "{consultant}: valid ({n} findings)" or "{consultant}: INVALID — {reason}"
     ```
 
     **Layer Completion Check**:
-    ```
-    layer1_success = count(external consultants where success == true)
-    layer2_success = count(Claude subagents where success == true)
+    ```text
+    layer1_success = count(external consultants where validated success == true)
+    layer2_success = count(Claude subagents where validated success == true)
 
     IF layer1_success == 0 AND layer2_success == 0:
       ABORT: "No successful responses from either layer."
@@ -353,9 +355,9 @@ fi
 1. **Log Agent Selection and Launch Both in Parallel**
 
    Quick mode runs exactly 2 agents. Log the selection at start:
-   ```
+   ```text
    "Quick mode: running council:gemini-consultant (Flash) + council:claude-codebase-context only.
-    Skipping 5 agents (codex, qwen, glm, kimi, claude-deep-review)."
+    Skipping 6 agents (codex, qwen, glm, kimi, claude-deep-review, review-scorer)."
    ```
 
    **Running:**
@@ -372,9 +374,11 @@ fi
 
    Launch simultaneously:
 
-   ```
+   ```text
    Task(council:gemini-consultant, flags="-m flash"):
    "Quick review of [artifact]. Return JSON with:
+   - consultant: your name (e.g. 'gemini')
+   - success: true
    - confidence: 0-1
    - severity: none|low|medium|high|critical
    - findings: [{type, severity, description, recommendation}]
@@ -383,7 +387,7 @@ fi
    Task(council:claude-codebase-context, model=sonnet):
    "Quick review of [artifact]. Use tool access to check against
    codebase conventions, CLAUDE.md rules, git history, and documentation.
-   Return JSON with same structure."
+   Return JSON with same structure (consultant, success, confidence, severity, findings, summary)."
    ```
 
 2. **Validate Responses and Evaluate**
@@ -395,7 +399,7 @@ fi
 
    Then evaluate confidence and severity:
 
-   ```
+   ```text
    IF both valid AND both confidence >= 0.7 AND neither severity == "critical":
      → DONE (dual-perspective triage sufficient)
      → Synthesize findings from both into unified report
@@ -407,7 +411,7 @@ fi
 
 3. **Full Council (Rare)**
 
-   ```
+   ```text
    → Launch full council (all 5 external + 2 Claude subagents + scoring)
    → Or escalate to human decision
    ```

@@ -182,7 +182,7 @@ Each consultant MUST return structured output:
 
 After collecting each consultant's response, validate it **before** passing findings to scoring or synthesis. This is a mandatory workflow step, not an advisory check.
 
-```
+```text
 FOR each consultant response:
   1. Parse response as JSON
      IF parse fails:
@@ -191,10 +191,15 @@ FOR each consultant response:
        → SKIP to next consultant
 
   2. Check required top-level fields: consultant (string), success (boolean), findings (array), summary (string)
-     IF any missing:
-       → mark success: false, reason: "invalid_response_format", detail: "Missing required field: <field>"
-       → log: "{consultant}: INVALID — Missing required field: <field>"
+     IF any missing OR wrong type:
+       → mark success: false, reason: "invalid_response_format", detail: "Missing or invalid required field: <field>"
+       → log: "{consultant}: INVALID — Missing or invalid required field: <field>"
        → SKIP to next consultant
+
+  2b. Normalize optional top-level fields used by quick-mode and scoring:
+      - fallback (boolean): IF missing → set false; IF wrong type → set false + log
+      - confidence (number 0.0–1.0): IF missing → set 0.5; IF wrong type → set 0.5 + log; IF out of range → clamp to [0.0, 1.0] + log
+      - severity (string: critical|high|medium|low|none): IF missing → set "info"; IF unrecognized → set "info" + log
 
   3. Validate each finding in findings[]:
      Required: type, severity, description
@@ -210,13 +215,14 @@ FOR each consultant response:
 - Invalid responses (steps 1-2) count as **failed** for partial success thresholds, layer completion checks, and weighted synthesis — the consultant ran but returned unusable output
 - No retry on invalid responses — the consultant already executed
 - Valid responses with dropped findings (step 3) still count as **successful** — usable findings proceed to scoring
+- The `reason` and `detail` fields used in steps 1–2 are orchestrator-set annotations — they are not part of the consultant response schema and are never expected from consultant output
 - See "Structured Response Format" above for the full schema
 
 ### Layer Completion Guarantee (Full Review Only)
 
 After validation, check that both layers produced usable results. This applies to **Pattern B (full review)** only.
 
-```
+```text
 layer1_success = count(external consultants where success == true after validation)
 layer2_success = count(Claude subagents where success == true after validation)
 
@@ -227,7 +233,7 @@ IF layer2_success == 0 AND mode == "full" (Pattern B):
   WARN: "Layer 2 (Claude subagents) returned no valid results — review may lack depth analysis"
   → Proceed with Layer 1 findings only
 
-IF layer1_success == 0 AND layer2_success > 0:
+IF layer1_success == 0 AND layer2_success > 0 AND mode == "full" (Pattern B):
   WARN: "Layer 1 (external consultants) returned no valid results — review lacks model diversity"
   → Proceed with Layer 2 findings only
 ```
@@ -419,10 +425,10 @@ Quick mode **does NOT run** these agents:
 | `council:claude-deep-review` | Opus cost — reserved for full review |
 | `council:review-scorer` | Not needed unless escalating to full council |
 
-```
+```text
 1. Log agent selection:
    "Quick mode: running council:gemini-consultant (Flash) + council:claude-codebase-context only.
-    Skipping 5 agents (codex, qwen, glm, kimi, claude-deep-review)."
+    Skipping 6 agents (codex, qwen, glm, kimi, claude-deep-review, review-scorer)."
 
 2. Launch BOTH in parallel:
    - council:gemini-consultant (gemini -m flash) — fastest external model

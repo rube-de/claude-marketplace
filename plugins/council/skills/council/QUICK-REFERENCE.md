@@ -13,7 +13,7 @@
 | `/council plan` | Plan validation mode | 5 parallel |
 | `/council consensus [topic]` | Multi-round consensus | 4-12 (multi-round) |
 | `/council adversarial` | Adversarial review | 5 parallel |
-| `/council quick` | Parallel Triage — 2 agents only (5 agents skipped) | 2+ (escalates if needed) |
+| `/council quick` | Parallel Triage — 2 agents only (6 agents skipped) | 2+ (escalates if needed) |
 
 **Note**: Does NOT auto-trigger. Requires explicit invocation.
 
