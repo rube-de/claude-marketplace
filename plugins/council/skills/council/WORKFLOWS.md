@@ -283,7 +283,7 @@ fi
       WARN: "Layer 2 (Claude subagents) returned no valid results — review may lack depth"
       → Proceed with Layer 1 findings only
 
-    IF layer1_success == 0:
+    IF layer1_success == 0 AND layer2_success > 0:
       WARN: "Layer 1 (external consultants) returned no valid results — review lacks model diversity"
       → Proceed with Layer 2 findings only
     ```
