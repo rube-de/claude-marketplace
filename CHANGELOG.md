@@ -1,3 +1,12 @@
+## [1.13.1](https://github.com/rube-de/cc-skills/compare/v1.13.0...v1.13.1) (2026-02-15)
+
+
+### Bug Fixes
+
+* add missing kimi-consultant and align partial response thresholds ([e9f12db](https://github.com/rube-de/cc-skills/commit/e9f12dbaa18b6928245362bb822e849dfc13eea1))
+* **council:** add namespace prefixes to agent invocation references ([9de5801](https://github.com/rube-de/cc-skills/commit/9de58010d3dbf7cfdefb68283e0996266dd43c7b)), closes [#63](https://github.com/rube-de/cc-skills/issues/63)
+* revert namespace prefixes in example output to bare agent names ([62c39a1](https://github.com/rube-de/cc-skills/commit/62c39a16ed5fd5331635b6346cc36647c3869c9a))
+
 # [1.13.0](https://github.com/rube-de/cc-skills/compare/v1.12.6...v1.13.0) (2026-02-14)
 
 
