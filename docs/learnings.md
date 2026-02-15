@@ -259,6 +259,7 @@ The script uses jq regex patterns (`in.progress`, `in.review`) for case-insensit
 | Router says "invoke with Skill" but `Skill` not in `allowed-tools` | Space-syntax dispatch (`/pm next`) may be blocked | Add `Skill` to `allowed-tools` if routing explicitly uses it |
 | Hook blocks all agents, not just lead | Teammates can't Edit/Write during active team | Verify hook protocol exposes actor identity before building role-based enforcement |
 | Skill commits/pushes without branch verification | Commits and pushes land on wrong branch | Assert `git branch --show-current` matches expected branch before any `git commit`/`git push` |
+| Bulk rename over-applied to example output | Namespace prefix appears in self-identification output (review summaries, `flagged by` lists) creating inconsistency | Distinguish invocation code (`Task()` calls) from example output (rendered summaries) — only invocations need namespace prefixes |
 | Hardcoding Glob/Grep/Read as only exploration method | Context window bloated with raw search results; misses structural patterns | Use Discover→Target pattern: Explore agent (built-in) for broad discovery, repomix-explorer (if available) for structural overview, then Glob/Grep/Read for targeted follow-up |
 
 > Sources for pitfalls table: [AGENTS.md](../AGENTS.md) (conventions section), [Plugin Authoring guide](PLUGIN-AUTHORING.md), [Claude Code Skills docs](https://code.claude.com/docs/en/skills), [PR #40](https://github.com/rube-de/cc-skills/pull/40), [PR #41](https://github.com/rube-de/cc-skills/pull/41), [PR #43](https://github.com/rube-de/cc-skills/pull/43), [Issue #59](https://github.com/rube-de/cc-skills/issues/59)
@@ -362,3 +363,27 @@ Post-checkout verification is defense-in-depth: re-check `git branch --show-curr
 **Why this matters**: Without verification, `git push origin HEAD` pushes to whatever branch you're on — not the PR's branch. PR #53 increased blast radius by adding `git push` to `pr-check`, turning "wrong local commit" into "wrong remote push."
 
 > Source: [Issue #54](https://github.com/rube-de/cc-skills/issues/54) — `pr-check` fetched `headRefName` but never verified or checked out the branch before committing and pushing.
+
+### Skill instructions must use namespaced agent names for Task invocations
+
+Claude Code registers plugin agents with a `{plugin}:{agent}` namespace prefix (e.g., `council:gemini-consultant`). Agent definition files (`agents/*.md`) use bare `name:` fields because Claude Code adds the prefix automatically. But skill instruction files (SKILL.md, WORKFLOWS.md) that tell Claude *how to invoke* agents via the `Task` tool must use the fully qualified name — otherwise Claude gets "Agent type not found" errors at runtime.
+
+**Bare names are correct in two places only**:
+1. Agent frontmatter `name:` field — Claude Code prefixes automatically
+2. JSON response schema enum values — self-identification output, not invocations
+
+**Everywhere else** in skill instructions (tables, diagrams, `Task()` pseudocode, prose references), use the full `{plugin}:{agent}` form.
+
+**Bad** — bare name in skill instructions:
+```markdown
+| `gemini-consultant` | `gemini` | Architecture |
+Task(gemini-consultant, timeout=120s): ...
+```
+
+**Good** — namespaced in skill instructions:
+```markdown
+| `council:gemini-consultant` | `gemini` | Architecture |
+Task(council:gemini-consultant, timeout=120s): ...
+```
+
+> Source: [Issue #63](https://github.com/rube-de/cc-skills/issues/63), [PR #71](https://github.com/rube-de/cc-skills/pull/71) — All 8 council agents failed to resolve because SKILL.md and WORKFLOWS.md used bare names.
