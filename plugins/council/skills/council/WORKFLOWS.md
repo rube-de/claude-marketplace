@@ -252,9 +252,45 @@ fi
         → Strong signal even without external consensus
    ```
 
-10. **Confidence Scoring (Sonnet Agent)**
+   Proceed to validation before scoring.
 
-    After all findings are merged:
+10. **Validate Responses and Check Layer Completion**
+
+    Before scoring, validate every response and verify both layers produced results.
+
+    **Validation** (see SKILL.md "Response Validation" for full algorithm):
+    ```
+    FOR each consultant response:
+      1. Parse as JSON — if fails: mark success: false
+      2. Check required fields (consultant, success, findings, summary)
+         — if missing: mark success: false
+      3. Validate each finding (type, severity, description; location for reviews)
+         — drop invalid findings, keep valid ones
+      4. Log result: "{consultant}: valid ({n} findings)" or "{consultant}: INVALID — {reason}"
+    ```
+
+    **Layer Completion Check**:
+    ```
+    layer1_success = count(external consultants where success == true)
+    layer2_success = count(Claude subagents where success == true)
+
+    IF layer1_success == 0 AND layer2_success == 0:
+      ABORT: "No successful responses from either layer."
+
+    IF layer2_success == 0:
+      WARN: "Layer 2 (Claude subagents) returned no valid results — review may lack depth"
+      → Proceed with Layer 1 findings only
+
+    IF layer1_success == 0:
+      WARN: "Layer 1 (external consultants) returned no valid results — review lacks model diversity"
+      → Proceed with Layer 2 findings only
+    ```
+
+    Only findings from validated, successful responses proceed to scoring.
+
+11. **Confidence Scoring (Sonnet Agent)**
+
+    After all findings are validated and merged:
     ```
     1. Deduplicate findings referring to the same issue (across both layers)
     2. Launch council:review-scorer (Sonnet) with full context + all findings
@@ -267,7 +303,7 @@ fi
 
     See SKILL.md "Confidence Scoring Agent" for scorer prompt template and rubric.
 
-11. **Apply Weighted Synthesis**
+12. **Apply Weighted Synthesis**
     ```
     Critical issues (score >= 80) from ANY source → Block merge
     High issues (score >= 80) from 2+ sources → Should fix
@@ -276,7 +312,7 @@ fi
     All other scored findings → Optional / informational
     ```
 
-12. **Present Review Summary**
+13. **Present Review Summary**
     ```markdown
     ## Council Code Review: [PR Title]
 
@@ -314,7 +350,25 @@ fi
 
 ### Step-by-Step
 
-1. **Launch Both Agents in Parallel**
+1. **Log Agent Selection and Launch Both in Parallel**
+
+   Quick mode runs exactly 2 agents. Log the selection at start:
+   ```
+   "Quick mode: running council:gemini-consultant (Flash) + council:claude-codebase-context only.
+    Skipping 5 agents (codex, qwen, glm, kimi, claude-deep-review)."
+   ```
+
+   **Running:**
+
+   | Agent | Model | Role |
+   |-------|-------|------|
+   | `council:gemini-consultant` | Gemini Flash (`-m flash`) | Fast external perspective |
+   | `council:claude-codebase-context` | Sonnet | Codebase-aware depth (native tool access) |
+
+   **Skipped** (reserved for full council escalation):
+   - `council:codex-consultant`, `council:qwen-consultant`, `council:glm-consultant`, `council:kimi-consultant` — cost/time
+   - `council:claude-deep-review` — opus cost, reserved for full review
+   - `council:review-scorer` — not needed unless escalating
 
    Launch simultaneously:
 
@@ -332,17 +386,21 @@ fi
    Return JSON with same structure."
    ```
 
-   Both run simultaneously. Gemini Flash provides fast external model
-   perspective; council:claude-codebase-context provides codebase-aware depth.
+2. **Validate Responses and Evaluate**
 
-2. **Evaluate Responses**
+   First, validate both responses (see SKILL.md "Response Validation" for full algorithm):
+   - Parse as JSON, check required fields, validate individual findings
+   - Mark invalid responses as failed; drop invalid individual findings
+   - Log: `"{consultant}: valid ({n} findings)"` or `"{consultant}: INVALID — {reason}"`
+
+   Then evaluate confidence and severity:
 
    ```
-   IF both confidence >= 0.7 AND neither severity == "critical":
+   IF both valid AND both confidence >= 0.7 AND neither severity == "critical":
      → DONE (dual-perspective triage sufficient)
      → Synthesize findings from both into unified report
 
-   IF either confidence < 0.7 OR either severity == "critical"
+   IF either invalid, either confidence < 0.7, either severity == "critical",
       OR they disagree on severity for the same finding:
      → Escalate to Step 3
    ```
