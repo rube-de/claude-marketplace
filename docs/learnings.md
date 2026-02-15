@@ -356,6 +356,23 @@ Multi-step workflows that process a list of items (comments, issues, findings) s
 
 **Pattern**: Enumerate → Process → Verify → HALT on mismatch
 
+**Bad** — totals-only check (drops can hide):
+```text
+Fetched 12 comments total; categorized 12 comments total. ✓
+# But @reviewerA had 4 comments and only 3 were categorized,
+# while @reviewerB had 3 comments and 4 were categorized (phantom).
+# Total still matches — the drop is invisible.
+```
+
+**Good** — per-source enumeration + verification:
+```text
+@reviewerA: expected 4, categorized 4 ✓
+@reviewerB: expected 3, categorized 2 ✗
+  → HALT: missing comment IDs: [2808261121]
+  → Recovery: re-processing 1 missed comment through Steps 3-5...
+  → Retry verification: @reviewerB: expected 3, categorized 3 ✓
+```
+
 - **Step N**: Enumerate items per source (reviewer, scanner, etc.) — store counts as baseline
 - **Steps N+1 through M**: Process, categorize, and act on each item
 - **Step M+1**: Assert sum-across-categories == baseline per source

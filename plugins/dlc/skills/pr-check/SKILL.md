@@ -96,9 +96,9 @@ Include all commenters (human reviewers, bots, CI tools) — do not pre-filter. 
 Print the inventory:
 
 ```text
-Reviewer inventory ({n} reviewers, {n} total comments, {n} top-level threads):
-  - @{reviewer1}: {n} comments ({m} top-level threads)
-  - @{reviewer2}: {n} comments ({m} top-level threads)
+Reviewer inventory ({reviewer_count} reviewers, {total_comment_count} total comments, {top_level_thread_count} top-level threads):
+  - @{reviewer1}: {reviewer1_comment_count} comments ({reviewer1_top_level_thread_count} top-level threads)
+  - @{reviewer2}: {reviewer2_comment_count} comments ({reviewer2_top_level_thread_count} top-level threads)
 ```
 
 Store each reviewer's **top-level thread count** as the coverage target for Step 5b. These counts are the baseline — every top-level thread must appear in exactly one category by the end of Step 5.
@@ -194,7 +194,7 @@ Verify that every top-level thread from Step 2b has been accounted for. For each
 
 For each reviewer from Step 2b, assert:
 
-```
+```text
 covered threads (sum across all categories) == top-level thread count from Step 2b
 ```
 
@@ -386,10 +386,10 @@ PR review compliance check complete.
   - PR: #{number} ({title})
   - Total comments: {n}
   - Resolved: {n}, Fixed by DLC: {n}, Skipped (user decision): {n}, Discussion: {n}, Blocked: {n}, Dismissed: {n}
-  - Coverage: {n}/{n} threads verified (Step 5b passed)
+  - Coverage: {verified_threads}/{total_threads} threads verified (Step 5b passed)
   - Per-reviewer breakdown:
-      @{reviewer1}: Resolved={n}, Fixed={n}, Skipped={n}, Discussion={n}, Blocked={n}, Dismissed={n} — 0 missed
-      @{reviewer2}: Resolved={n}, Fixed={n}, Skipped={n}, Discussion={n}, Blocked={n}, Dismissed={n} — 0 missed
+      @{reviewer1}: Resolved={resolved_count}, Fixed={fixed_count}, Skipped={skipped_count}, Discussion={discussion_count}, Blocked={blocked_count}, Dismissed={dismissed_count} — 0 missed
+      @{reviewer2}: Resolved={resolved_count}, Fixed={fixed_count}, Skipped={skipped_count}, Discussion={discussion_count}, Blocked={blocked_count}, Dismissed={dismissed_count} — 0 missed
   - Push: {Pushed {sha} to origin/{branch}}  [if push succeeded]
   - Push: Push failed: {reason}  [if push failed]
   - Follow-up issue: #{number} ({url})  [only if user approved creation]
