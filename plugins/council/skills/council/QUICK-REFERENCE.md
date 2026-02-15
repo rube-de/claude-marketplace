@@ -13,7 +13,7 @@
 | `/council plan` | Plan validation mode | 5 parallel |
 | `/council consensus [topic]` | Multi-round consensus | 4-12 (multi-round) |
 | `/council adversarial` | Adversarial review | 5 parallel |
-| `/council quick` | Parallel Triage (2→full) | 2+ (escalates if needed) |
+| `/council quick` | Parallel Triage — 2 agents only (6 agents skipped) | 2+ (escalates if needed) |
 
 **Note**: Does NOT auto-trigger. Requires explicit invocation.
 
@@ -98,6 +98,22 @@ done
 │                                                                      │
 └──────────────────────────────────────────────────────────────────────┘
 ```
+
+### Quick Mode Agent Boundary
+
+Quick mode (`/council quick`) runs **exactly 2 agents** — no more, no fewer:
+
+| Agent | Model | Role |
+|-------|-------|------|
+| `council:gemini-consultant` | Gemini Flash | Fast external perspective |
+| `council:claude-codebase-context` | Sonnet | Codebase-aware depth (native tool access) |
+
+**Skipped in quick mode** (only run if escalating to full council):
+- `council:codex-consultant`, `council:qwen-consultant`, `council:glm-consultant`, `council:kimi-consultant`
+- `council:claude-deep-review` (opus — reserved for full review)
+- `council:review-scorer` (not needed unless escalating)
+
+Escalation to full council launches **all** agents (5 external + 2 Claude subagents + scorer).
 
 ## Review Workflow Flow
 

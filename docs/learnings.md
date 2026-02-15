@@ -262,6 +262,8 @@ The script uses jq regex patterns (`in.progress`, `in.review`) for case-insensit
 | Bulk rename over-applied to example output | Namespace prefix appears in self-identification output (review summaries, `flagged by` lists) creating inconsistency | Distinguish invocation code (`Task()` calls) from example output (rendered summaries) — only invocations need namespace prefixes |
 | Hardcoding Glob/Grep/Read as only exploration method | Context window bloated with raw search results; misses structural patterns | Use Discover→Target pattern: Explore agent (built-in) for broad discovery, repomix-explorer (if available) for structural overview, then Glob/Grep/Read for targeted follow-up |
 | No reviewer-level tracking in multi-step workflows | Comments silently dropped — no way to detect which reviewer's feedback was skipped | Add an enumeration step (baseline) before processing and a coverage verification step (assertion) after — with HALT on mismatch |
+| Advisory hooks instead of inline validation | PostToolUse hook warns about invalid output, but LLM follows workflow steps — warning is ignored | Make validation a named workflow step with explicit "mark as failed" semantics; hooks remain as defense-in-depth only |
+| Ambiguous mode boundaries (e.g., quick mode) | LLM infers which agents to run from context, skips layers it shouldn't | Enumerate exactly which agents run and which are skipped in explicit tables at the workflow step level |
 
 > Sources for pitfalls table: [AGENTS.md](../AGENTS.md) (conventions section), [Plugin Authoring guide](PLUGIN-AUTHORING.md), [Claude Code Skills docs](https://code.claude.com/docs/en/skills), [PR #40](https://github.com/rube-de/cc-skills/pull/40), [PR #41](https://github.com/rube-de/cc-skills/pull/41), [PR #43](https://github.com/rube-de/cc-skills/pull/43), [Issue #59](https://github.com/rube-de/cc-skills/issues/59)
 
@@ -420,3 +422,13 @@ Task(council:gemini-consultant, timeout=120s): ...
 ```
 
 > Source: [Issue #63](https://github.com/rube-de/cc-skills/issues/63), [PR #71](https://github.com/rube-de/cc-skills/pull/71) — All 8 council agents failed to resolve because SKILL.md and WORKFLOWS.md used bare names.
+
+### Response validation must be explicit in workflow steps, not advisory
+
+PostToolUse hooks that warn about invalid consultant output are insufficient because the orchestrating LLM follows workflow steps, not hook warnings. A hook can detect a malformed JSON response and print a warning, but the LLM proceeds to the next workflow step regardless — the warning sits in tool output it may never re-read.
+
+**Fix**: Make validation a **named workflow step** with explicit "mark as failed" semantics. The LLM reads and executes workflow steps sequentially, so an inline validation step between "collect responses" and "score findings" forces the check to happen. The hook remains as defense-in-depth but is no longer the primary gate.
+
+The same pattern applies to **layer completion guarantees** and **mode boundaries** (e.g., quick mode agent selection). If the LLM must choose which agents to run, list them in an explicit table at the step level — don't rely on the LLM inferring the boundary from surrounding context.
+
+> Source: [Issue #65](https://github.com/rube-de/cc-skills/issues/65) — Claude skipped Layer 2 in quick mode and posted reviews with wrong formatting because it inferred behavior from context instead of following explicit steps.

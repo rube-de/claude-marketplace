@@ -178,6 +178,68 @@ Each consultant MUST return structured output:
 
 **Location field**: MANDATORY for code review findings (`/council review`). Must be `file:line` format (e.g. `src/api.ts:42`). Optional for non-code reviews (`/council plan`, `/council adversarial`, `/council consensus`).
 
+### Response Validation (Post-Collection)
+
+After collecting each consultant's response, validate it **before** passing findings to scoring or synthesis. This is a mandatory workflow step, not an advisory check.
+
+```text
+FOR each consultant response:
+  1. Parse response as JSON
+     IF parse fails:
+       → mark success: false, reason: "invalid_response_format"
+       → log: "{consultant}: INVALID — invalid_response_format"
+       → SKIP to next consultant
+
+  2. Check required top-level fields: consultant (string), success (boolean), findings (array), summary (string)
+     IF any missing OR wrong type:
+       → mark success: false, reason: "invalid_response_format", detail: "Missing or invalid required field: <field>"
+       → log: "{consultant}: INVALID — Missing or invalid required field: <field>"
+       → SKIP to next consultant
+
+  2b. Normalize optional top-level fields used by quick-mode and scoring:
+      - fallback (boolean): IF missing → set false; IF wrong type → set false + log
+      - confidence (number 0.0–1.0): IF missing → set 0.5; IF wrong type → set 0.5 + log; IF out of range → clamp to [0.0, 1.0] + log
+      - severity (string: critical|high|medium|low|none): IF missing → set "none"; IF unrecognized → set "none" + log
+
+  3. Validate each finding in findings[]:
+     Required: type, severity, description
+     For /council review: location (file:line) is MANDATORY
+     IF a finding is missing required fields:
+       → DROP that finding (not the entire response)
+       → log: "{consultant}: dropped finding #{n} — missing {field}"
+
+  4. Log validation result:
+     → "{consultant}: valid ({n} findings)" or "{consultant}: INVALID — {reason}"
+```
+
+- Invalid responses (steps 1-2) count as **failed** for partial success thresholds, layer completion checks, and weighted synthesis — the consultant ran but returned unusable output
+- No retry on invalid responses — the consultant already executed
+- Valid responses with dropped findings (step 3) still count as **successful** — usable findings proceed to scoring
+- The `reason` and `detail` fields used in steps 1–2 are orchestrator-set annotations — they are not part of the consultant response schema and are never expected from consultant output
+- See "Structured Response Format" above for the full schema
+
+### Layer Completion Guarantee (Full Review Only)
+
+After validation, check that both layers produced usable results. This applies to **Pattern B (full review)** only.
+
+```text
+layer1_success = count(external consultants where success == true after validation)
+layer2_success = count(Claude subagents where success == true after validation)
+
+IF layer1_success == 0 AND layer2_success == 0:
+  ABORT: "No successful responses from either layer. Cannot proceed with review."
+
+IF layer2_success == 0 AND mode == "full" (Pattern B):
+  WARN: "Layer 2 (Claude subagents) returned no valid results — review may lack depth analysis"
+  → Proceed with Layer 1 findings only
+
+IF layer1_success == 0 AND layer2_success > 0 AND mode == "full" (Pattern B):
+  WARN: "Layer 1 (external consultants) returned no valid results — review lacks model diversity"
+  → Proceed with Layer 2 findings only
+```
+
+Only findings from validated, successful responses proceed to confidence scoring. Pattern C (quick mode) has its own escalation logic — see Pattern C below.
+
 ## Security Hardening
 
 ### Prompt Injection Prevention
@@ -345,14 +407,42 @@ See "Dual-Layer Architecture" section above and WORKFLOWS.md Workflow B for deta
 
 ### Pattern C: Parallel Triage (Efficient)
 
-```
-1. Launch BOTH in parallel:
-   - Gemini Flash (gemini -m flash) — fastest external model
+Quick mode runs **exactly these 2 agents**:
+
+| Agent | Model | Role | Why included |
+|-------|-------|------|--------------|
+| `council:gemini-consultant` | Gemini Flash (`-m flash`) | Fast external perspective | Fastest external model, broad coverage |
+| `council:claude-codebase-context` | Sonnet | Codebase-aware depth | Native tool access, CLAUDE.md compliance, git history |
+
+Quick mode **does NOT run** these agents:
+
+| Agent | Why skipped |
+|-------|-------------|
+| `council:codex-consultant` | Cost/time — covered by escalation if needed |
+| `council:qwen-consultant` | Cost/time — covered by escalation if needed |
+| `council:glm-consultant` | Cost/time — covered by escalation if needed |
+| `council:kimi-consultant` | Cost/time — covered by escalation if needed |
+| `council:claude-deep-review` | Opus cost — reserved for full review |
+| `council:review-scorer` | Not needed unless escalating to full council |
+
+```text
+1. Log agent selection:
+   "Quick mode: running council:gemini-consultant (Flash) + council:claude-codebase-context only.
+    Skipping 6 agents (codex, qwen, glm, kimi, claude-deep-review, review-scorer)."
+
+2. Launch BOTH in parallel:
+   - council:gemini-consultant (gemini -m flash) — fastest external model
    - council:claude-codebase-context (sonnet) — native codebase access
-2. If BOTH confident (>= 0.7) AND no critical findings:
+
+3. Validate both responses (see Response Validation above)
+   - Mark invalid responses as failed
+   - Drop invalid individual findings
+
+4. If BOTH valid AND confident (>= 0.7) AND no critical findings:
    → DONE (synthesize dual-perspective report)
-3. If disagreement, confidence < 0.7, OR severity == "critical":
-   → Escalate to full council
+
+5. If either invalid, confidence < 0.7, disagreement, OR severity == "critical":
+   → Escalate to full council (all 5 external + 2 Claude subagents + scoring)
 ```
 
 **Use for**: Quick validations, cost-sensitive reviews, time-critical decisions
