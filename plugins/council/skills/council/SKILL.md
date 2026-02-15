@@ -199,7 +199,7 @@ FOR each consultant response:
   2b. Normalize optional top-level fields used by quick-mode and scoring:
       - fallback (boolean): IF missing → set false; IF wrong type → set false + log
       - confidence (number 0.0–1.0): IF missing → set 0.5; IF wrong type → set 0.5 + log; IF out of range → clamp to [0.0, 1.0] + log
-      - severity (string: critical|high|medium|low|none): IF missing → set "info"; IF unrecognized → set "info" + log
+      - severity (string: critical|high|medium|low|none): IF missing → set "none"; IF unrecognized → set "none" + log
 
   3. Validate each finding in findings[]:
      Required: type, severity, description

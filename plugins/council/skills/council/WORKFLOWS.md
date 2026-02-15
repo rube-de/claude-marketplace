@@ -265,7 +265,7 @@ fi
       2. Check required fields (consultant, success, findings, summary)
          — if missing: mark success: false
       2b. Normalize optional fields (fallback, confidence, severity):
-         — Apply defaults if missing (fallback: false, confidence: 0.5, severity: "info")
+         — Apply defaults if missing (fallback: false, confidence: 0.5, severity: "none")
       3. Validate each finding (type, severity, description; location for reviews)
          — drop invalid findings, keep valid ones
       4. Log result: "{consultant}: valid ({n} findings)" or "{consultant}: INVALID — {reason}"
