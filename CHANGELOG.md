@@ -1,3 +1,17 @@
+# [1.17.0](https://github.com/rube-de/cc-skills/compare/v1.16.0...v1.17.0) (2026-02-18)
+
+
+### Bug Fixes
+
+* address PR review comments ([4226574](https://github.com/rube-de/cc-skills/commit/42265747bd6271421a86a09cf488662f57f798ea))
+* **dlc:** harden git-ops branch detection and deletion UX ([8876f1a](https://github.com/rube-de/cc-skills/commit/8876f1a0837f8662702a99598e306934e81224fa))
+* replace invalid --no-current flag with grep filter in git-ops ([95b9b30](https://github.com/rube-de/cc-skills/commit/95b9b30b38309f50105c897e118d2b9e65c088fe))
+
+
+### Features
+
+* **dlc:** add git-ops sub-skill for branch cleanup ([716e021](https://github.com/rube-de/cc-skills/commit/716e021024d307122cd05b3cd880c7a30c07d52d))
+
 # [1.16.0](https://github.com/rube-de/cc-skills/compare/v1.15.0...v1.16.0) (2026-02-17)
 
 
