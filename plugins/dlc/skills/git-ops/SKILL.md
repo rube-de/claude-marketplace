@@ -55,7 +55,7 @@ Combine two detection methods and deduplicate:
 
 ```bash
 # Method 1: Branches fully merged into the default branch
-MERGED=$(git branch --merged "$DEFAULT_BRANCH" --no-current | sed 's/^[[:space:]]*//')
+MERGED=$(git branch --merged "$DEFAULT_BRANCH" | grep -v '^\*' | sed 's/^[[:space:]]*//')
 
 # Method 2: Branches whose remote tracking ref is gone (plumbing command for reliable parsing)
 GONE=$(git for-each-ref --format '%(refname:short) %(upstream:track)' refs/heads | grep '\[gone\]' | cut -d' ' -f1)
