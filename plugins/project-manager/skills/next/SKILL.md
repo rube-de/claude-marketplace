@@ -49,7 +49,7 @@ sh scripts/open-issues.sh --include-assigned
 - Check stderr for a JSON `error` object — if present, abort with the error message (auth failures, missing tools, repo detection failures are handled by the script)
 - Extract and store the full JSON output as `$ISSUES_DATA`
 
-**Edge case — no open issues:** If `.total_open == 0`, report "No open issues found" and stop.
+**Edge case — no unassigned issues:** If `.total_open == 0`, report "No unassigned issues found (try `--include-assigned` to include assigned items)" and stop.
 
 **Edge case — 100+ issues:** If `.total_open >= 100`, warn: "Results capped at 100 issues. Consider filtering by label or milestone for a broader view."
 
@@ -68,9 +68,9 @@ Build two maps from the pre-computed data:
 - `blockedBy[issue] → Set<issue>` — from each issue's `.blocked_by` array
 - `blocks[issue] → Set<issue>` — from each issue's `.blocks` array
 
-Blocker resolution is already handled by the script — references to closed/absent issues are excluded from the `blocked_by`/`blocks` arrays. Each issue's `unblocked` flag indicates whether all its blockers are resolved.
+Blocker resolution is already handled by the script via `blockers_resolved`/`unblocked`; the `blocked_by`/`blocks` arrays still list all referenced issues (including closed ones). Use the `unblocked` flag to determine eligibility.
 
-**Edge case — no dependency markers found:** If `dependency_graph.edges` is empty, skip Steps 3-4 ranking adjustments for dependency weight. Rank purely on priority, type, age, and milestone.
+**Edge case — no dependency markers found:** If `dependency_graph.edges` is empty, skip Step 3 (no cycles possible) and omit the "blocks others" dependency weight factor from Step 4 ranking. Rank purely on priority, type, age, and milestone.
 
 ### Step 3: Detect Circular Dependencies
 

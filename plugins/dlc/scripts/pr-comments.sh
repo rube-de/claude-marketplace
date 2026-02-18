@@ -10,7 +10,8 @@ die_json() {
   if command -v jq >/dev/null 2>&1; then
     jq -n --arg err "$1" --arg code "$_code" '{error: $err, code: $code}' >&2
   else
-    printf '{"error":"%s","code":"%s"}\n' "$1" "$_code" >&2
+    _err_escaped=$(printf '%s' "$1" | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g' | tr '\n' ' ')
+    printf '{"error":"%s","code":"%s"}\n' "$_err_escaped" "$_code" >&2
   fi
   exit 1
 }
@@ -83,11 +84,17 @@ query($owner: String!, $repo: String!, $number: Int!) {
 }
 '
 
+_err=$(mktemp)
 RAW=$(gh api graphql \
   -f query="$QUERY" \
   -F owner="$OWNER" \
   -F repo="$REPO" \
-  -F number="$PR_NUMBER" 2>&1) || die_json "GraphQL query failed: $(echo "$RAW" | tr '"' "'")" "GRAPHQL_FAIL"
+  -F number="$PR_NUMBER" 2>"$_err")
+_status=$?
+if [ $_status -ne 0 ]; then
+  die_json "GraphQL query failed: $(tr '"' "'" <"$_err")" "GRAPHQL_FAIL"
+fi
+rm -f "$_err"
 
 # --- null check ------------------------------------------------------------
 
@@ -96,7 +103,7 @@ echo "$RAW" | jq -e '.data.repository.pullRequest' >/dev/null 2>&1 \
 
 # --- jq transform ----------------------------------------------------------
 
-echo "$RAW" | jq '
+echo "$RAW" | jq --arg owner "$OWNER" --arg repo "$REPO" '
   .data.repository.pullRequest as $pr |
 
   # Extract PR author for has_author_reply detection
@@ -147,7 +154,9 @@ echo "$RAW" | jq '
       branch:         $pr.headRefName,
       state:          $pr.state,
       author:         ($pr.author.login // "unknown"),
-      reviewDecision: ($pr.reviewDecision // null)
+      reviewDecision: ($pr.reviewDecision // null),
+      owner:          $owner,
+      repo:           $repo
     },
     reviewers: $reviewers,
     threads: $threads,

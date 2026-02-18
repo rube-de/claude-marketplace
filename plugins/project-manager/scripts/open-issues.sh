@@ -10,7 +10,8 @@ die_json() {
   if command -v jq >/dev/null 2>&1; then
     jq -n --arg err "$1" --arg code "$_code" '{error: $err, code: $code}' >&2
   else
-    printf '{"error":"%s","code":"%s"}\n' "$1" "$_code" >&2
+    _err_escaped=$(printf '%s' "$1" | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g' | tr '\n' ' ')
+    printf '{"error":"%s","code":"%s"}\n' "$_err_escaped" "$_code" >&2
   fi
   exit 1
 }
@@ -61,12 +62,11 @@ NOW=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 
 echo "$RAW" | jq --arg now "$NOW" --argjson include_assigned "$INCLUDE_ASSIGNED" --arg repo "$OWNER_REPO" '
 
-  # Parse ISO date to epoch-ish day count for age calculation
+  # Accurate age calculation using epoch math
   def days_since_created:
     (.created_at // .createdAt) as $created |
-    (($now | split("T")[0] | split("-") | map(tonumber)) | .[0] * 365 + .[1] * 30 + .[2]) as $now_days |
-    (($created | split("T")[0] | split("-") | map(tonumber)) | .[0] * 365 + .[1] * 30 + .[2]) as $created_days |
-    (($now_days - $created_days) | if . < 0 then 0 else . end);
+    ((($now | fromdateiso8601) - ($created | fromdateiso8601)) / 86400 | floor) as $delta |
+    (if $delta < 0 then 0 else $delta end);
 
   # Set of all open issue numbers for blocker resolution
   ([.[].number]) as $open_set |
