@@ -16,6 +16,7 @@ Fetch latest state, prune deleted remote branches, and sync the default branch.
 
 ```bash
 # Detect the default branch dynamically
+# 2>/dev/null suppresses errors when symbolic-ref is not set (e.g. shallow clone)
 DEFAULT_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's|refs/remotes/origin/||')
 
 # Fallback: check for main, then master
@@ -35,12 +36,18 @@ echo "Default branch: $DEFAULT_BRANCH"
 # Fetch and prune stale remote tracking refs
 git fetch origin --prune
 
-# Switch to default branch and pull
+# Abort if worktree has uncommitted changes
+if [ -n "$(git status --porcelain)" ]; then
+  echo "ERROR: Worktree is dirty — stash or commit your changes before running git-ops."
+  exit 1
+fi
+
+# Switch to default branch and pull (fast-forward only to avoid merge commits)
 git checkout "$DEFAULT_BRANCH"
-git pull origin "$DEFAULT_BRANCH"
+git pull --ff-only origin "$DEFAULT_BRANCH"
 ```
 
-If the checkout fails due to uncommitted changes, abort with: "Worktree is dirty — stash or commit your changes before running git-ops."
+If `git pull --ff-only` fails, abort with: "ERROR: non-fast-forward update for $DEFAULT_BRANCH. Resolve manually."
 
 ## Step 2: Detect Cleanup Candidates
 
@@ -48,10 +55,13 @@ Combine two detection methods and deduplicate:
 
 ```bash
 # Method 1: Branches fully merged into the default branch
-git branch --merged "$DEFAULT_BRANCH" | grep -v "^\*" | sed 's/^[[:space:]]*//'
+MERGED=$(git branch --merged "$DEFAULT_BRANCH" --no-current | sed 's/^[[:space:]]*//')
 
 # Method 2: Branches whose remote tracking ref is gone (plumbing command for reliable parsing)
-git for-each-ref --format '%(refname:short) %(upstream:track)' refs/heads | grep '\[gone\]' | cut -d' ' -f1
+GONE=$(git for-each-ref --format '%(refname:short) %(upstream:track)' refs/heads | grep '\[gone\]' | cut -d' ' -f1)
+
+# Combine and deduplicate: track which method(s) detected each branch
+# Branches in both lists get reason "merged + gone"
 ```
 
 **Filter out protected branches** — never include these in candidates:
@@ -60,6 +70,11 @@ git for-each-ref --format '%(refname:short) %(upstream:track)' refs/heads | grep
 - `master`
 - `develop`
 - Any branch matching `release/*`
+
+```bash
+# Filter protected branches from the combined candidate list
+echo "$CANDIDATES" | grep -v -E "^(main|master|develop|${DEFAULT_BRANCH})$" | grep -v '^release/'
+```
 
 For each candidate, record:
 
@@ -78,9 +93,9 @@ Display the candidate list with reasons:
 ```text
 Found {n} branch(es) to clean up:
 
-  {branch-1}  (merged)                    → delete local only
-  {branch-2}  (gone)                      → delete local only
-  {branch-3}  (merged + gone, remote: yes) → delete local + remote
+  {branch-1}  (merged, has_remote: no)          → delete local only
+  {branch-2}  (gone, has_remote: no)            → delete local only
+  {branch-3}  (merged + gone, has_remote: yes)  → delete local + remote
 ```
 
 Use `AskUserQuestion` with three options:
@@ -101,10 +116,13 @@ For each confirmed branch:
 
 ```bash
 # Safe delete — Git will refuse if the branch is not fully merged
-git branch -d "$BRANCH_NAME"
+if ! git branch -d "$BRANCH_NAME"; then
+  echo "WARNING: Failed to delete $BRANCH_NAME — skipping."
+  continue
+fi
 
 # If the branch has a remote tracking ref, delete it from origin
-if git ls-remote --exit-code --heads origin "$BRANCH_NAME" >/dev/null 2>&1; then
+if git ls-remote --exit-code --heads origin "$BRANCH_NAME" > /dev/null; then
   git push origin --delete "$BRANCH_NAME"
 fi
 ```
