@@ -1,3 +1,18 @@
+# [1.18.0](https://github.com/rube-de/cc-skills/compare/v1.17.0...v1.18.0) (2026-02-20)
+
+
+### Bug Fixes
+
+* address coderabbitai nitpicks — trap cleanup and null guards ([7970fa5](https://github.com/rube-de/cc-skills/commit/7970fa5cd72140ec2e99c95093cea89b8f324126))
+* address new reviewer threads on PR [#79](https://github.com/rube-de/cc-skills/issues/79) ([b90053b](https://github.com/rube-de/cc-skills/commit/b90053bdc3241461a14cb7415a3006e4b4c56544))
+* address PR review comments ([da80595](https://github.com/rube-de/cc-skills/commit/da80595acbb88f9b84f5cfb0418782f779ade641))
+* replace {number} placeholder with $PR_NUMBER in Step 5c bash block ([63f3173](https://github.com/rube-de/cc-skills/commit/63f31731d3c1b97a0830629ca0f2928c8865b894))
+
+
+### Features
+
+* **dlc,pm:** batch GitHub data fetching into per-plugin shell scripts ([e1ee2b9](https://github.com/rube-de/cc-skills/commit/e1ee2b97ad3b928c7a99b86446454cbac6e611a1)), closes [#74](https://github.com/rube-de/cc-skills/issues/74)
+
 # [1.17.0](https://github.com/rube-de/cc-skills/compare/v1.16.0...v1.17.0) (2026-02-18)
 
 
