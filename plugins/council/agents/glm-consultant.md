@@ -37,11 +37,8 @@ opencode -f src/services/*.ts "Analyze the service layer architecture"
 
 ### Specifying Model
 ```bash
-# GLM-5 (latest capable model)
-opencode -m glm-5 "Analyze this implementation"
-
-# With specific provider
-opencode -m zai-coding-plan/glm-5 "Deep architecture review"
+# GLM-5 via Z.AI Coding Plan provider
+opencode -m zai-coding-plan/glm-5 "Analyze this implementation"
 ```
 
 ### With Stdin (piping)
@@ -87,7 +84,7 @@ opencode -i  # Start interactive session
 
 ### PR Review
 ```bash
-git diff main...HEAD | opencode -m glm-5 "Review this PR:
+git diff main...HEAD | opencode -m zai-coding-plan/glm-5 "Review this PR:
 1. Breaking changes or regressions
 2. Security vulnerabilities
 3. Performance implications
@@ -99,7 +96,7 @@ Be specific with file:line references."
 
 ### Architecture Review
 ```bash
-opencode -m glm-5 -f src/core/ "Analyze this core module architecture:
+opencode -m zai-coding-plan/glm-5 -f src/core/ "Analyze this core module architecture:
 1. Evaluate separation of concerns
 2. Identify coupling issues
 3. Assess extensibility
@@ -122,7 +119,7 @@ Be rigorous and mathematical."
 
 ### Code Review (Alternative Perspective)
 ```bash
-opencode -m glm-5 -f src/services/order.ts "Review this order service.
+opencode -m zai-coding-plan/glm-5 -f src/services/order.ts "Review this order service.
 
 Context: Gemini suggested extracting a PricingService.
 Codex recommended using the Strategy pattern.
@@ -135,7 +132,7 @@ Provide your independent analysis:
 
 ### Debugging Session
 ```bash
-opencode -m glm-5 "Debug this intermittent failure:
+opencode -m zai-coding-plan/glm-5 "Debug this intermittent failure:
 
 Symptoms:
 - Fails ~5% of requests under load
