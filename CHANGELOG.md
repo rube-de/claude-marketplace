@@ -1,3 +1,16 @@
+# [1.19.0](https://github.com/rube-de/cc-skills/compare/v1.18.0...v1.19.0) (2026-02-21)
+
+
+### Bug Fixes
+
+* address PR review comments ([fb4a5be](https://github.com/rube-de/cc-skills/commit/fb4a5becb2b4ad04565a8ca0b97b32a454ea7032))
+* use fully-qualified opencode model ID across all docs ([a9e2978](https://github.com/rube-de/cc-skills/commit/a9e297806f5de2f957539ee9fe722be94148b7e1))
+
+
+### Features
+
+* **council:** upgrade GLM consultant from GLM-4.7 to GLM-5 ([7aff68e](https://github.com/rube-de/cc-skills/commit/7aff68e9f5c48d58e394d6cb610ad3b245737b9f)), closes [#77](https://github.com/rube-de/cc-skills/issues/77)
+
 # [1.18.0](https://github.com/rube-de/cc-skills/compare/v1.17.0...v1.18.0) (2026-02-20)
 
 
